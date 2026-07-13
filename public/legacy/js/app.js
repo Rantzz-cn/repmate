@@ -11,6 +11,7 @@ import { setupPWA } from './pwa.js';
 import { requireSession, signOut } from './auth.js';
 
 const app = document.querySelector('#app');
+const reportError = (error, context) => window.__REPMATE_CAPTURE_ERROR__?.(error, context);
 const syncStatus = document.querySelector('#sync-status');
 const updateSyncStatus = ({ status, pending = 0 }) => {
   if (!syncStatus) return;
@@ -910,6 +911,7 @@ function requestSessionPhoto() {
         d.close();
         done(photo);
       } catch (error) {
+        reportError(error, { feature: 'session-photo-processing' });
         status.textContent = `${error.message} You can choose another image or finish without it.`;
         status.classList.add('is-error');
         input.value = '';
@@ -932,6 +934,7 @@ async function finishWorkout() {
   try {
     await put('workouts', w);
   } catch (error) {
+    reportError(error, { feature: 'workout-save', hasPhoto: Boolean(w.photo) });
     if (!w.photo) throw error;
     w.photo = null;
     await put('workouts', w);
@@ -1521,6 +1524,7 @@ async function init() {
     setupPWA();
     startRouter(render);
   } catch (err) {
+    reportError(err, { feature: 'app-initialization', online: navigator.onLine });
     console.error(err);
     app.innerHTML = `
       <div class="card empty app-load-error" role="alert">

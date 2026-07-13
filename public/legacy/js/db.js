@@ -65,6 +65,7 @@ const localPut = (storeName, value) => transaction(storeName, 'readwrite', (stor
 const localDelete = (storeName, key) => transaction(storeName, 'readwrite', (store) => store.delete(key));
 const recordKey = (userId, store, id) => `${userId}|${store}|${id}`;
 const emitStatus = (status, pending = 0) => window.dispatchEvent(new CustomEvent('repmate:sync', { detail: { status, pending } }));
+const reportError = (error, context) => window.__REPMATE_CAPTURE_ERROR__?.(error, context);
 
 async function currentUser() {
   const { data, error } = await supabase.auth.getSession();
@@ -127,8 +128,10 @@ export async function syncPending() {
         }
           if (error) throw error;
           await localDelete(OUTBOX, change.key);
-        } catch (_) {
-          emitStatus('offline', (await pendingFor(user.id)).length);
+        } catch (error) {
+          const pendingCount = (await pendingFor(user.id)).length;
+          reportError(error, { feature: 'offline-sync', store: change.store, operation: change.operation, pending: pendingCount });
+          emitStatus('offline', pendingCount);
           return false;
         }
       }
@@ -146,7 +149,10 @@ export async function getAll(store) {
       if (error) throw error;
       await cacheRemoteStore(user.id, store, data || []);
       emitStatus('synced', (await pendingFor(user.id)).length);
-    } catch (_) { emitStatus('offline', (await pendingFor(user.id)).length); }
+    } catch (error) {
+      reportError(error, { feature: 'remote-data-load', store });
+      emitStatus('offline', (await pendingFor(user.id)).length);
+    }
   }
   return cachedRecords(user.id, store);
 }
@@ -182,7 +188,10 @@ export async function clear(store) {
   if (navigator.onLine) syncPending();
 }
 
-window.addEventListener('online', () => { syncPending().catch(() => emitStatus('offline', 0)); });
+window.addEventListener('online', () => { syncPending().catch((error) => {
+  reportError(error, { feature: 'reconnect-sync' });
+  emitStatus('offline', 0);
+}); });
 window.addEventListener('offline', async () => {
   try { emitStatus('offline', (await pendingFor((await currentUser()).id)).length); }
   catch (_) { emitStatus('offline', 0); }

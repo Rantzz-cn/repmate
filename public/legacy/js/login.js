@@ -3,6 +3,7 @@ import { supabase } from './supabase.js';
 const root = document.querySelector('#auth-root');
 const legalDialog = document.querySelector('#legal-dialog');
 const legalContent = document.querySelector('#legal-content');
+const reportError = (error, context) => window.__REPMATE_CAPTURE_ERROR__?.(error, context);
 
 const legalDocuments = {
   terms: {
@@ -53,7 +54,10 @@ function render(message = '') {
     googleButton.disabled = true;
     googleButton.querySelector('span:last-child').textContent = 'Connecting to Google…';
     const { error } = await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: appUrl() } });
-    if (error) render(error.message);
+    if (error) {
+      reportError(error, { feature: 'google-auth' });
+      render(error.message);
+    }
   };
   root.querySelectorAll('[data-legal]').forEach((button) => {
     button.onclick = () => openLegalDocument(button.dataset.legal);

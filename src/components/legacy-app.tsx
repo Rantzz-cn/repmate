@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import * as Sentry from "@sentry/nextjs";
 import { AppLoading } from "./app-loading";
 
 const styles = [
@@ -35,6 +36,7 @@ export function LegacyApp({ route }: { route: "today" | "program" | "exercises" 
       load("/assets/vendor/body-muscles/body-muscles.umd.min.js"),
     ]).then(() => load("/legacy/js/app.js", "module"))
       .catch((error) => {
+        Sentry.captureException(error, { tags: { feature: "legacy-app-load" } });
         console.error(error);
         const app = document.querySelector("#app");
         if (app) app.innerHTML = '<div class="card empty app-load-error"><h2>RepMate could not load</h2><p>Refresh the page to try again.</p></div>';

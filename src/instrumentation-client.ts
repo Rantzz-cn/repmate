@@ -18,4 +18,22 @@ Sentry.init({
   },
 });
 
+declare global {
+  interface Window {
+    __REPMATE_CAPTURE_ERROR__?: (
+      error: unknown,
+      context?: Record<string, string | number | boolean | undefined>,
+    ) => void;
+  }
+}
+
+window.__REPMATE_CAPTURE_ERROR__ = (error, context = {}) => {
+  Sentry.withScope((scope) => {
+    Object.entries(context).forEach(([key, value]) => {
+      if (value !== undefined) scope.setTag(key, String(value));
+    });
+    Sentry.captureException(error);
+  });
+};
+
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;

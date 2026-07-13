@@ -19,6 +19,7 @@ export async function setupPWA() {
       await registration.update();
       registration.waiting?.postMessage('SKIP_WAITING');
     } catch (error) {
+      window.__REPMATE_CAPTURE_ERROR__?.(error, { feature: 'service-worker-registration' });
       console.error(error);
     }
   }
