@@ -1,4 +1,4 @@
-const CACHE_NAME = "repmate-next-v9";
+const CACHE_NAME = "repmate-next-v10";
 const STATIC_ASSETS = [
   "/manifest.json",
   "/assets/images/logo.png",
