@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#050505">
+  <title>RepMate | Train With Purpose</title>
+  <meta name="description" content="Build routines, log working sets, learn exercise form, and track real training progress with RepMate.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&amp;family=Doto:wght@700;800;900&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="assets/images/logo.png">
+  <link rel="stylesheet" href="css/landing.css">
+  <link rel="stylesheet" href="css/numeric.css">
+</head>
+<body>
+  <header class="site-nav">
+    <a class="site-logo" href="#top" aria-label="RepMate home"><img src="assets/images/whitelogo.png" alt="RepMate"></a>
+    <nav aria-label="Landing page"><a href="#inside">Inside the app</a><a href="#exercises">Exercises</a><a href="#flow">How it works</a></nav>
+    <a class="nav-login" href="login.html">Sign In</a>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Built for focused training</p>
+        <h1>Train.<br>Track.<br><em>Repeat.</em></h1>
+        <p class="hero-intro">A personal workout companion that keeps programs, working sets, exercise form, and progress in one calm place.</p>
+        <div class="hero-actions"><a class="button button-light" href="login.html">Start With Google <span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M19 8v6M16 11h6"/></svg></span></a><a class="button button-dark" href="#inside">See the App <span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M10 18h4"/></svg></span></a></div>
+        <ul class="hero-notes"><li><b>34</b><span>guided movements</span></li><li><b>Cloud</b><span>progress sync</span></li><li><b>Private</b><span>user-owned data</span></li></ul>
+      </div>
+
+      <div class="hero-stage" aria-label="RepMate mobile interface previews">
+        <div class="stage-grid" aria-hidden="true"></div>
+        <img class="stage-coach" src="assets/images/repmate.png" alt="" aria-hidden="true">
+
+        <article class="phone phone-home">
+          <div class="phone-hardware"><span>9:41</span><i></i><b>•••</b></div>
+          <div class="phone-screen">
+            <div class="phone-brand"><img src="assets/images/whitelogo.png" alt=""><span>Today</span></div>
+            <header class="mini-greeting"><small>SUNDAY, JULY 13</small><h2>Hi, Athlete</h2></header>
+            <div class="mini-coach"><img src="assets/images/repmate.png" alt=""><p><b>RepMate</b>Your Push session is ready.</p></div>
+            <div class="mini-plan"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6M7 7v10M17 7v10M20 9v6M7 12h10"/></svg></span><p><small>TODAY'S PLAN</small><b>Push Day</b>5 exercises · Chest, shoulders</p><button>Start</button></div>
+            <div class="mini-metrics"><span><b>2,490</b>Volume</span><span><b>4</b>Streak</span><span><b>3</b>Sessions</span></div>
+            <div class="mini-readiness"><small>READINESS</small><div><button>Strong</button><button>Steady</button><button>Sore</button></div></div>
+            <div class="mini-nav"><b><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5M5.5 10v10h13V10"/></svg></b><span><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><span><svg viewBox="0 0 24 24"><path d="M4 9v6M7 7v10M17 7v10M20 9v6M7 12h10"/></svg></span><span><svg viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg></span><span><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span></div>
+          </div>
+        </article>
+
+        <article class="phone phone-workout">
+          <div class="phone-hardware"><span>9:41</span><i></i><b>•••</b></div>
+          <div class="phone-screen">
+            <div class="phone-brand"><img src="assets/images/whitelogo.png" alt=""><span>Workout</span></div>
+            <header class="workout-title"><small>EXERCISE 1 OF 5</small><h2>Bench Press</h2><p>Chest · Barbell</p></header>
+            <div class="muscle-preview"><div id="landing-body-chart" aria-label="Front body map highlighting the chest"></div><span>Primary: Chest</span></div>
+            <div class="set-head"><span>Set</span><span>Weight</span><span>Reps</span><span>Done</span></div>
+            <div class="set-row"><b>1</b><span>70 kg</span><span>10</span><i>✓</i></div>
+            <div class="set-row"><b>2</b><span>70 kg</span><span>9</span><i>✓</i></div>
+            <div class="set-row active"><b>3</b><span>70 kg</span><span>8</span><i>✓</i></div>
+            <button class="add-set">+ Add Set</button>
+            <div class="mini-timer"><span>REST TIMER</span><b>01:42</b><button>+30</button></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="signal-bar" aria-label="RepMate highlights"><div><span>01</span><p><b>Programs that fit you</b>Choose the days and exercises.</p></div><div><span>02</span><p><b>Form before ego</b>Animations and muscle maps.</p></div><div><span>03</span><p><b>Proof of progress</b>Volume, streaks, and history.</p></div></section>
+
+    <section class="inside" id="inside">
+      <header class="section-head"><div><p class="kicker">Inside RepMate</p><h2>Everything between<br>plan and progress.</h2></div><p>No overloaded dashboard. Each screen has one job, and every action stays close to the workout.</p></header>
+      <div class="inside-grid">
+        <article class="feature feature-program"><div class="feature-copy"><span>Program</span><h3>Build the week you’ll actually follow.</h3><p>Create routines, assign training days, select movements, and change the plan without rebuilding it.</p></div><div class="program-ui"><header><small>ACTIVE PLAN</small><b>Cutting PPL</b></header><div><span>01</span><p><b>Push</b>Mon · 5 exercises</p><i><svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></i></div><div><span>02</span><p><b>Pull</b>Wed · 5 exercises</p><i><svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></i></div><div><span>03</span><p><b>Legs</b>Fri · 5 exercises</p><i><svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></i></div></div></article>
+        <article class="feature feature-progress"><div class="feature-copy"><span>Progress</span><h3>See the work adding up.</h3><p>Review completed sessions, weekly volume, streaks, and shareable workout recaps.</p></div><div class="chart-ui"><small>TRAINING VOLUME</small><strong>8,420 <i>kg</i></strong><svg viewBox="0 0 360 130" preserveAspectRatio="none"><path d="M0 108C35 100 47 72 78 83S120 111 151 64 199 32 229 48 277 91 306 47 360 18"/><path class="fill" d="M0 108C35 100 47 72 78 83S120 111 151 64 199 32 229 48 277 91 306 47 360 18V130H0Z"/></svg><div><span>Week 1</span><span>Week 2</span><span>Week 3</span><span>Now</span></div></div></article>
+        <article class="feature feature-coach"><img src="assets/images/gorillamate.png" alt="Gori Mate exercise coach"><div class="feature-copy"><span>Exercise Coach</span><h3>Short cues. Better reps.</h3><p>Gori Mate keeps the motivation brief while exercise details show exactly what the movement hits.</p></div></article>
+      </div>
+    </section>
+
+    <section class="exercise-section" id="exercises">
+      <header class="section-head"><div><p class="kicker">Exercise Library</p><h2>Learn the movement.<br>Know the target.</h2></div><p>Real animated demonstrations, focused coaching cues, equipment filters, and front/back muscle maps.</p></header>
+      <div class="exercise-rail">
+        <article><div><img src="assets/animations/barbell-bench-press.gif" alt="Barbell bench press animation"><span>Chest</span></div><h3>Barbell Bench Press</h3><p>Barbell · Strength</p></article>
+        <article><div><img src="assets/animations/lat-pulldown.gif" alt="Lat pulldown animation"><span>Back</span></div><h3>Lat Pulldown</h3><p>Cable · Pull</p></article>
+        <article><div><img src="assets/animations/barbell-full-squat.gif" alt="Barbell full squat animation"><span>Quads</span></div><h3>Barbell Full Squat</h3><p>Barbell · Lower Body</p></article>
+        <article><div><img src="assets/animations/dumbbell-biceps-curl.gif" alt="Dumbbell curl animation"><span>Biceps</span></div><h3>Dumbbell Curl</h3><p>Dumbbell · Isolation</p></article>
+      </div>
+      <div class="library-cta"><p><b>34 movements</b> across chest, back, shoulders, arms, legs, calves, and core.</p><a href="login.html">Open the Library <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6M7 7v10M17 7v10M20 9v6M7 12h10"/></svg></a></div>
+    </section>
+
+    <section class="flow" id="flow">
+      <header><p class="kicker">A Repeatable System</p><h2>Plan. Perform. Review.</h2></header>
+      <ol><li><span>01</span><div><h3>Choose the session</h3><p>Start today’s routine or customize the exercises first.</p></div></li><li><span>02</span><div><h3>Log the honest work</h3><p>Track weight and reps while the rest timer keeps the pace.</p></div></li><li><span>03</span><div><h3>Finish with context</h3><p>Add an optional photo and generate a social workout recap.</p></div></li><li><span>04</span><div><h3>Return with proof</h3><p>Use history and volume to make the next session better.</p></div></li></ol>
+    </section>
+
+    <section class="final-cta"><img src="assets/images/repmate.png" alt="RepMate wolf coach"><div><p class="kicker">Your next session</p><h2>Ready when<br>you are.</h2><p>Continue with Google, build a routine, and give every rep a place to count.</p></div><a class="button button-light" href="login.html">Continue With Google <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6M7 7v10M17 7v10M20 9v6M7 12h10"/></svg></span></a></section>
+  </main>
+
+  <footer class="site-footer"><a class="footer-logo" href="#top"><img src="assets/images/whitelogo.png" alt="RepMate"></a><p>Train with purpose. Progress with proof.</p><nav><a href="#inside">Features</a><a href="#exercises">Exercises</a><a href="login.html">Sign In</a></nav><span>© 2026 RepMate</span></footer>
+  <script src="assets/vendor/body-muscles/body-muscles.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="js/landing-auth.js"></script>
+  <script src="js/landing.js"></script>
+</body>
+</html>

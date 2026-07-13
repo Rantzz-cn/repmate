@@ -1,0 +1,122 @@
+﻿@media(min-width:900px) {
+  .shell {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+  }
+  .sidebar {
+    display: block;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 28px 18px;
+    border-right: 1px solid var(--line);
+  }
+  .brand {
+    font-weight: 850;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+  .brand span {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    background: var(--accent);
+    color: var(--inverse);
+  }
+  #desktop-nav {
+    display: grid;
+    gap: 8px;
+  }
+  .nav-link {
+    display: flex;
+    justify-content: flex-start;
+    padding: 0 13px;
+    font-size: .9rem;
+  }
+  .bottom-nav {
+    display: none;
+  }
+  main {
+    padding-bottom: 50px;
+    max-width: 820px;
+  }
+  .stats {
+    grid-template-columns: repeat(4,1fr);
+  }
+  .exercise-grid {
+    grid-template-columns: repeat(2,1fr);
+  }
+  .sticky-controls {
+    bottom: 0;
+    margin-bottom: 0;
+  }
+}
+@media(max-width:390px) {
+  main {
+    padding-inline: 12px;
+  }
+  .set-row {
+    grid-template-columns: 24px 1fr 1fr .75fr 40px;
+  }
+  .card {
+    padding: 14px;
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto!important;
+    transition: none!important;
+    animation: none!important;
+  }
+}
+@media(max-width:540px) {
+  .exercise-grid {
+    grid-template-columns: 1fr;
+  }
+  .exercise-card__media {
+    aspect-ratio: 16/9;
+  }
+}
+@media(min-width:900px) {
+  .mobile-brand {
+    display: none;
+  }
+}
+@media(min-width:900px) {
+  #desktop-nav .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 50px;
+    padding: 0 14px;
+    border: 1px solid transparent;
+    border-radius: 13px;
+    transition: .18s;
+  }
+  #desktop-nav .nav-link:hover {
+    color: var(--text);
+    background: var(--panel);
+  }
+  #desktop-nav .nav-link.active {
+    color: var(--inverse);
+    background: var(--text);
+    border-color: var(--text);
+  }
+  #desktop-nav .nav-link .nav-icon {
+    flex: none;
+  }
+}
+@media(min-width:900px) {
+  .gori-float {
+    right: max(24px,calc((100vw - 1180px)/2 + 24px));
+    bottom: 24px;
+  }
+}
+

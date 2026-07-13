@@ -1,0 +1,4 @@
+import { exercises } from "./data";
+import type { Program, Routine, Workout } from "./types";
+export function createWorkout(program: Program, day: Routine): Workout { return { id: "active", sessionId: crypto.randomUUID(), programId: program.id, dayId: day.id, name: day.name, startedAt: new Date().toISOString(), current: 0, exercises: day.exercises.map((item) => ({ exerciseId: item.exerciseId, rest: exercises.find((exercise) => exercise.id === item.exerciseId)?.rest ?? 90, minReps: item.minReps, maxReps: item.maxReps, sets: Array.from({ length: item.sets }, () => ({ weight: 0, reps: 0, rir: 2, done: false })) })) }; }
+export function workoutStats(workout: Workout) { const sets = workout.exercises.flatMap((exercise) => exercise.sets).filter((set) => set.done); return { sets: sets.length, volume: sets.reduce((sum,set) => sum + set.weight * set.reps,0), reps: sets.reduce((sum,set) => sum + set.reps,0) }; }

@@ -1,0 +1,1 @@
+export function PageHeader({ eyebrow, title, action }: { eyebrow: string; title: string; action?: React.ReactNode }) { return <header className="flex items-end justify-between gap-4"><div><p className="eyebrow">{eyebrow}</p><h1 className="display page-title mt-2">{title}</h1></div>{action}</header>; }

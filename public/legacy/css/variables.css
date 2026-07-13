@@ -1,0 +1,45 @@
+﻿:root {
+  --bg: #090909;
+  --panel: #121212;
+  --panel-2: #1a1a1a;
+  --text: #f7f7f7;
+  --muted: #999;
+  --line: #292929;
+  --grid: #ffffff0a;
+  --inverse: #090909;
+  --accent: #fff;
+  --danger: #ef6464;
+  --ok: #77c895;
+  --radius: 16px;
+  --shadow: 0 12px 40px #0006;
+  --font-numeric: var(--font-doto), "Courier New", monospace;
+}
+html[data-theme=light] {
+  --bg: #f4f4f2;
+  --panel: #fff;
+  --panel-2: #ececea;
+  --text: #111;
+  --muted: #666;
+  --line: #d8d8d4;
+  --grid: #0000000b;
+  --inverse: #fff;
+  --accent: #111;
+  --shadow: 0 10px 30px #0001;
+}
+body {
+  background-color: var(--bg);
+  background-image: linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size: 32px 32px;
+  background-attachment: fixed;
+  color: var(--text);
+  min-height: 100vh;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% -10%,color-mix(in srgb,var(--text) 7%,transparent),transparent 38%);
+}
+
