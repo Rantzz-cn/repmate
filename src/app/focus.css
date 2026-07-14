@@ -51,3 +51,42 @@ html[data-theme="light"] .focus-back:hover { background: #ececea; }
   .focus-page,
   .focus-page.is-leaving { animation: none; }
 }
+
+.circle-notifications-modal {
+  border-color: #ffffff1a;
+}
+
+.circle-notifications-modal__header {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  align-items: center;
+  gap: 13px;
+  padding: 18px 20px 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.circle-notifications-modal__icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid #ffffff17;
+  border-radius: 13px;
+  background: #1b1b1b;
+  color: #eee;
+}
+
+.circle-notifications-modal__icon svg { width: 18px; }
+.circle-notifications-modal .circle-notifications__list { max-height: min(420px, 55dvh); }
+
+html[data-theme="light"] .circle-notifications-modal {
+  border-color: #d8d8d4 !important;
+  background: #fff !important;
+  color: #111 !important;
+}
+
+html[data-theme="light"] .circle-notifications-modal__icon {
+  border-color: #d8d8d4;
+  background: #ececea;
+  color: #222;
+}

@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { PageHeader } from "@/components/page-header";
 import { useAuth } from "@/components/providers/auth-provider";
 import { useRepMate } from "@/components/providers/app-provider";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { supabase } from "@/lib/supabase";
 import { workoutStats } from "@/lib/workouts";
 
@@ -132,10 +133,9 @@ export default function CirclePage() {
     if (result.error) return notify("Could not save your reaction.");
     await loadCircle();
   };
-  const toggleNotifications = async () => {
-    const opening = !notificationsOpen;
-    setNotificationsOpen(opening);
-    if (!opening || !unreadReactions.length) return;
+  const changeNotifications = async (open: boolean) => {
+    setNotificationsOpen(open);
+    if (!open || !unreadReactions.length) return;
     const seenAt = new Date().toISOString();
     const { error } = await supabase.from("social_profiles").update({ notifications_seen_at: seenAt, updated_at: seenAt }).eq("user_id", userId);
     if (!error) {
@@ -147,15 +147,17 @@ export default function CirclePage() {
   if (setupRequired) return <div className="app-page"><PageHeader eyebrow="Train together" title="Gym Circle"/><section className="circle-empty"><ShieldCheck/><h2>Circle needs one quick setup</h2><p>Run <strong>supabase/social.sql</strong> in your Supabase SQL Editor to enable friends, activity, and reactions.</p></section></div>;
 
   return <div className="app-page circle-page">
-    <PageHeader eyebrow="Train together" title="Gym Circle" action={<button className="circle-notification-button" onClick={toggleNotifications} aria-label={`Circle notifications${notificationCount ? `, ${notificationCount} unread` : ""}`} aria-expanded={notificationsOpen}><Bell/>{notificationCount > 0 && <span>{Math.min(notificationCount, 99)}</span>}</button>}/>
-    {notificationsOpen && <section className="circle-notifications" aria-label="Circle notifications">
-      <header><div><h2>Notifications</h2><p>Friend requests and session reactions</p></div><button onClick={() => setNotificationsOpen(false)} aria-label="Close notifications"><X/></button></header>
-      <div className="circle-notifications__list">
+    <PageHeader eyebrow="Train together" title="Gym Circle" action={<button className="circle-notification-button" onClick={() => changeNotifications(true)} aria-label={`Circle notifications${notificationCount ? `, ${notificationCount} unread` : ""}`} aria-expanded={notificationsOpen}><Bell/>{notificationCount > 0 && <span>{Math.min(notificationCount, 99)}</span>}</button>}/>
+    <Dialog open={notificationsOpen} onOpenChange={changeNotifications}>
+      <DialogContent className="circle-notifications-modal max-w-[360px] p-0">
+        <header className="circle-notifications-modal__header"><span className="circle-notifications-modal__icon"><Bell/></span><div className="pr-10"><DialogTitle className="text-lg">Notifications</DialogTitle><DialogDescription className="mt-1">Friend requests and session reactions</DialogDescription></div></header>
+        <div className="circle-notifications__list">
         {incoming.map((request) => { const person = profileById(request.requester_id); return <button key={`request-${request.id}`} onClick={() => { setNotificationsOpen(false); setTab("requests"); }}><Avatar profile={person}/><span><strong>{person?.display_name ?? "RepMate Member"}</strong><small>sent you a friend request</small></span><UserPlus/></button>; })}
         {reactionActivity.map((reaction) => { const person = profileById(reaction.user_id); const post = posts.find((item) => item.id === reaction.post_id); return <div key={`${reaction.post_id}-${reaction.user_id}`}><Avatar profile={person}/><span><strong>{person?.display_name ?? "RepMate Member"}</strong><small>gave {reactionLabels[reaction.reaction]} to your {post?.workout_summary.name ?? "workout"}</small></span><Zap/></div>; })}
         {!incoming.length && !reactionActivity.length && <p className="circle-notifications__empty">You are all caught up.</p>}
-      </div>
-    </section>}
+        </div>
+      </DialogContent>
+    </Dialog>
     <nav className="circle-tabs" aria-label="Circle sections">
       <button className={tab === "feed" ? "is-active" : ""} onClick={() => setTab("feed")}>Feed</button>
       <button className={tab === "people" ? "is-active" : ""} onClick={() => setTab("people")}>Find friends</button>
