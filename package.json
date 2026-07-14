@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint ."
   },
@@ -12,6 +12,7 @@
     "@radix-ui/react-dialog": "latest",
     "@radix-ui/react-select": "latest",
     "@sentry/nextjs": "^10.65.0",
+    "@serwist/next": "^9.5.11",
     "@supabase/supabase-js": "latest",
     "class-variance-authority": "latest",
     "clsx": "latest",
@@ -19,6 +20,7 @@
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
+    "serwist": "^9.5.11",
     "tailwind-merge": "latest"
   },
   "devDependencies": {

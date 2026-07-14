@@ -1,5 +1,9 @@
 import { withSentryConfig } from "@sentry/nextjs";
+import withSerwistInit from "@serwist/next";
 import type { NextConfig } from "next";
+import { createHash } from "node:crypto";
+import { readdirSync, readFileSync } from "node:fs";
+import path from "node:path";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -10,7 +14,48 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withSentryConfig(nextConfig, {
+const routeRevision = process.env.VERCEL_GIT_COMMIT_SHA ?? "repmate-local-v1";
+const offlineRoutes = [
+  "/",
+  "/login",
+  "/app",
+  "/app/programs",
+  "/app/exercises",
+  "/app/progress",
+  "/app/profile",
+  "/app/workout",
+  "/offline",
+];
+
+const offlineAssetRoots = ["assets", "legacy"];
+const collectPublicAssets = (relativeDirectory: string): Array<{ url: string; revision: string }> =>
+  readdirSync(path.join(process.cwd(), "public", relativeDirectory), { withFileTypes: true }).flatMap((entry) => {
+    const relativePath = path.posix.join(relativeDirectory, entry.name);
+    if (entry.isDirectory()) return collectPublicAssets(relativePath);
+    const contents = readFileSync(path.join(process.cwd(), "public", relativePath));
+    return [{
+      url: `/${relativePath}`,
+      revision: createHash("sha256").update(contents).digest("hex").slice(0, 16),
+    }];
+  });
+
+const offlineAssets = offlineAssetRoots.flatMap(collectPublicAssets);
+
+const withSerwist = withSerwistInit({
+  swSrc: "src/app/sw.ts",
+  swDest: "public/sw.js",
+  register: false,
+  cacheOnNavigation: true,
+  reloadOnOnline: false,
+  disable: process.env.NODE_ENV === "development",
+  additionalPrecacheEntries: [
+    ...offlineRoutes.map((url) => ({ url, revision: routeRevision })),
+    { url: "/manifest.json", revision: routeRevision },
+    ...offlineAssets,
+  ],
+});
+
+export default withSentryConfig(withSerwist(nextConfig), {
   // For all available options, see:
   // https://www.npmjs.com/package/@sentry/webpack-plugin#options
 
