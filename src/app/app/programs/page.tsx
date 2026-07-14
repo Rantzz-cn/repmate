@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/page-header";
 import { useRepMate } from "@/components/providers/app-provider";
 import { RoutineEditor } from "@/components/routine-editor";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { weekdays } from "@/lib/data";
 import type { Program, Routine } from "@/lib/types";
 import { createWorkout } from "@/lib/workouts";
@@ -16,6 +17,7 @@ export default function ProgramsPage() {
   const router = useRouter();
   const [editing, setEditing] = useState<{ program: Program; routine: Routine } | null>(null);
   const [toast, setToast] = useState("");
+  const [pendingDelete, setPendingDelete] = useState<Program | null>(null);
   const toastTimer = useRef<number | null>(null);
 
   const notify = (message: string) => {
@@ -53,10 +55,12 @@ export default function ProgramsPage() {
     notify(`${program.name} is now active.`);
   };
 
-  const deleteProgram = async (program: Program) => {
-    if (!window.confirm(`Delete ${program.name}? This cannot be undone.`)) return;
-    await state.removeProgram(program.id);
-    notify(`${program.name} deleted.`);
+  const deleteProgram = async () => {
+    if (!pendingDelete) return;
+    const name = pendingDelete.name;
+    await state.removeProgram(pendingDelete.id);
+    setPendingDelete(null);
+    notify(`${name} deleted.`);
   };
 
   const start = async (program: Program, routine: Routine) => {
@@ -77,10 +81,16 @@ export default function ProgramsPage() {
           </article>)}
           <button onClick={() => addRoutine(program)} className="program-add-routine"><Plus />Add routine</button>
         </div>
-        <footer className="program-card-native__footer"><Button variant="secondary" onClick={() => copyProgram(program)}><Copy className="size-4" />Copy plan</Button>{!program.active && <Button variant="secondary" onClick={() => activateProgram(program)}>Activate</Button>}<Button variant="danger" onClick={() => deleteProgram(program)}><Trash2 className="size-4" />Delete</Button></footer>
+        <footer className="program-card-native__footer"><Button variant="secondary" onClick={() => copyProgram(program)}><Copy className="size-4" />Copy plan</Button>{!program.active && <Button variant="secondary" onClick={() => activateProgram(program)}>Activate</Button>}<Button variant="danger" onClick={() => setPendingDelete(program)}><Trash2 className="size-4" />Delete</Button></footer>
       </section>)}
     </div>
     {editing && <RoutineEditor key={editing.routine.id} program={editing.program} routine={editing.routine} open onOpenChange={(open) => !open && setEditing(null)} onSave={saveRoutine} />}
+    <Dialog open={Boolean(pendingDelete)} onOpenChange={(open) => !open && setPendingDelete(null)}>
+      <DialogContent className="max-w-[360px] p-5 sm:p-6">
+        <div className="pr-11"><p className="mb-2 text-[10px] font-bold uppercase tracking-[.14em] text-red-400">Delete program</p><DialogTitle className="text-lg">Delete {pendingDelete?.name}?</DialogTitle><DialogDescription className="mt-2 leading-relaxed">This removes the program and all of its saved routines. Completed workout history will stay in Progress.</DialogDescription></div>
+        <div className="mt-6 grid grid-cols-2 gap-2 border-t border-white/10 pt-4"><Button variant="secondary" onClick={() => setPendingDelete(null)}>Cancel</Button><Button variant="danger" onClick={deleteProgram}><Trash2 className="size-4" />Delete</Button></div>
+      </DialogContent>
+    </Dialog>
     {toast && <div className="program-toast" role="status" aria-live="polite"><CheckCircle2 aria-hidden="true" /><span>{toast}</span></div>}
   </div>;
 }
