@@ -103,7 +103,7 @@ export default function ProgramsPage() {
     <Dialog open={Boolean(pendingRoutineDelete)} onOpenChange={(open) => !open && setPendingRoutineDelete(null)}>
       <DialogContent className="max-w-[360px] p-5 sm:p-6">
         <div className="pr-11"><p className="mb-2 text-[10px] font-bold uppercase tracking-[.14em] text-red-400">Delete routine</p><DialogTitle className="text-lg">Delete {pendingRoutineDelete?.routine.name}?</DialogTitle><DialogDescription className="mt-2 leading-relaxed">This removes the routine and its exercise setup from {pendingRoutineDelete?.program.name}. Your completed workouts will not be affected.</DialogDescription></div>
-        <div className="mt-6 grid grid-cols-2 gap-2 border-t border-white/10 pt-4"><Button variant="secondary" onClick={() => setPendingRoutineDelete(null)}>Cancel</Button><Button variant="danger" onClick={deleteRoutine}><Trash2 className="size-4" />Delete routine</Button></div>
+        <div className="mt-6 grid grid-cols-2 gap-2 border-t border-white/10 pt-4"><Button variant="secondary" onClick={() => setPendingRoutineDelete(null)}>Cancel</Button><Button variant="danger" onClick={deleteRoutine}><Trash2 className="size-4" />Delete</Button></div>
       </DialogContent>
     </Dialog>
     {toast && <div className="program-toast" role="status" aria-live="polite"><CheckCircle2 aria-hidden="true" /><span>{toast}</span></div>}
