@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Copy, Pencil, Play, Plus, Trash2 } from "lucide-react";
+import { CheckCircle2, Copy, Pencil, Play, Plus, Trash2, TriangleAlert } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { useRepMate } from "@/components/providers/app-provider";
 import { RoutineEditor } from "@/components/routine-editor";
@@ -95,15 +95,15 @@ export default function ProgramsPage() {
     </div>
     {editing && <RoutineEditor key={editing.routine.id} program={editing.program} routine={editing.routine} open onOpenChange={(open) => !open && setEditing(null)} onSave={saveRoutine} />}
     <Dialog open={Boolean(pendingDelete)} onOpenChange={(open) => !open && setPendingDelete(null)}>
-      <DialogContent className="max-w-[360px] p-5 sm:p-6">
-        <div className="pr-11"><p className="mb-2 text-[10px] font-bold uppercase tracking-[.14em] text-red-400">Delete program</p><DialogTitle className="text-lg">Delete {pendingDelete?.name}?</DialogTitle><DialogDescription className="mt-2 leading-relaxed">This removes the program and all of its saved routines. Completed workout history will stay in Progress.</DialogDescription></div>
-        <div className="mt-6 grid grid-cols-2 gap-2 border-t border-white/10 pt-4"><Button variant="secondary" onClick={() => setPendingDelete(null)}>Cancel</Button><Button variant="danger" onClick={deleteProgram}><Trash2 className="size-4" />Delete</Button></div>
+      <DialogContent className="confirm-dialog max-w-[340px] p-0">
+        <div className="confirm-dialog__body"><span className="confirm-dialog__icon"><TriangleAlert /></span><div className="pr-10"><p className="confirm-dialog__eyebrow">Remove program</p><DialogTitle className="text-lg">Delete {pendingDelete?.name}?</DialogTitle><DialogDescription className="mt-2 leading-relaxed">The program and its routines will be removed. Completed workouts will stay in Progress.</DialogDescription></div></div>
+        <div className="confirm-dialog__actions"><Button variant="secondary" onClick={() => setPendingDelete(null)}>Cancel</Button><Button variant="danger" onClick={deleteProgram}><Trash2 className="size-4" />Delete</Button></div>
       </DialogContent>
     </Dialog>
     <Dialog open={Boolean(pendingRoutineDelete)} onOpenChange={(open) => !open && setPendingRoutineDelete(null)}>
-      <DialogContent className="max-w-[360px] p-5 sm:p-6">
-        <div className="pr-11"><p className="mb-2 text-[10px] font-bold uppercase tracking-[.14em] text-red-400">Delete routine</p><DialogTitle className="text-lg">Delete {pendingRoutineDelete?.routine.name}?</DialogTitle><DialogDescription className="mt-2 leading-relaxed">This removes the routine and its exercise setup from {pendingRoutineDelete?.program.name}. Your completed workouts will not be affected.</DialogDescription></div>
-        <div className="mt-6 grid grid-cols-2 gap-2 border-t border-white/10 pt-4"><Button variant="secondary" onClick={() => setPendingRoutineDelete(null)}>Cancel</Button><Button variant="danger" onClick={deleteRoutine}><Trash2 className="size-4" />Delete</Button></div>
+      <DialogContent className="confirm-dialog max-w-[340px] p-0">
+        <div className="confirm-dialog__body"><span className="confirm-dialog__icon"><TriangleAlert /></span><div className="pr-10"><p className="confirm-dialog__eyebrow">Remove routine</p><DialogTitle className="text-lg">Delete {pendingRoutineDelete?.routine.name}?</DialogTitle><DialogDescription className="mt-2 leading-relaxed">Its exercise setup will be removed from {pendingRoutineDelete?.program.name}. Completed workouts will stay in Progress.</DialogDescription></div></div>
+        <div className="confirm-dialog__actions"><Button variant="secondary" onClick={() => setPendingRoutineDelete(null)}>Cancel</Button><Button variant="danger" onClick={deleteRoutine}><Trash2 className="size-4" />Delete</Button></div>
       </DialogContent>
     </Dialog>
     {toast && <div className="program-toast" role="status" aria-live="polite"><CheckCircle2 aria-hidden="true" /><span>{toast}</span></div>}
