@@ -41,20 +41,25 @@ export default function CirclePage() {
     if (!userId) return;
     setLoading(true);
     setSetupRequired(false);
-    const own = await supabase.from("social_profiles").select("user_id").eq("user_id", userId).maybeSingle();
+    const own = await supabase.from("social_profiles").select("user_id,display_name").eq("user_id", userId).maybeSingle();
     if (own.error) {
       setSetupRequired(true);
       setLoading(false);
       return;
     }
+    const metadataName = session?.user.user_metadata.full_name || session?.user.user_metadata.name;
+    const emailName = session?.user.email?.split("@")[0].replace(/[._-]+/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+    const googleName = metadataName || emailName || "RepMate Member";
     if (!own.data) {
       const raw = (session?.user.email?.split("@")[0] || "athlete").toLowerCase().replace(/[^a-z0-9_]/g, "_").slice(0, 16);
       await supabase.from("social_profiles").insert({
         user_id: userId,
         username: `${raw.length >= 3 ? raw : "athlete"}_${userId.slice(0, 5)}`,
-        display_name: session?.user.user_metadata.full_name || state.profile.name || "RepMate Athlete",
+        display_name: googleName,
         avatar_url: session?.user.user_metadata.avatar_url || state.profile.avatarUrl || null,
       });
+    } else if (own.data.display_name === "Athlete" || own.data.display_name === "RepMate Athlete") {
+      await supabase.from("social_profiles").update({ display_name: googleName, updated_at: new Date().toISOString() }).eq("user_id", userId);
     }
     const [profileResult, friendshipResult, postResult, reactionResult] = await Promise.all([
       supabase.from("social_profiles").select("user_id,username,display_name,avatar_url,bio").order("display_name"),
@@ -76,7 +81,7 @@ export default function CirclePage() {
   const incoming = friendships.filter((item) => item.addressee_id === userId && item.status === "pending");
   const profileById = (id: string) => profiles.find((profile) => profile.user_id === id);
   const relationship = (id: string) => friendships.find((item) => (item.requester_id === userId && item.addressee_id === id) || (item.addressee_id === userId && item.requester_id === id));
-  const people = profiles.filter((profile) => profile.user_id !== userId && `${profile.display_name} ${profile.username}`.toLowerCase().includes(query.trim().toLowerCase()));
+  const people = profiles.filter((profile) => profile.user_id !== userId && profile.display_name.toLowerCase().includes(query.trim().toLowerCase()));
 
   const sendRequest = async (addresseeId: string) => {
     const { error } = await supabase.from("friendships").insert({ requester_id: userId, addressee_id: addresseeId });
@@ -143,7 +148,7 @@ export default function CirclePage() {
           const author = profileById(post.user_id);
           const postReactions = reactions.filter((item) => item.post_id === post.id);
           return <article className="circle-post" key={post.id}>
-            <header><Avatar profile={author}/><div><strong>{author?.display_name ?? "RepMate Athlete"}</strong><span>@{author?.username ?? "athlete"} · {relativeTime(post.created_at)}</span></div></header>
+            <header><Avatar profile={author}/><div><strong>{author?.display_name ?? "RepMate Member"}</strong><span>@{author?.username ?? "member"} · {relativeTime(post.created_at)}</span></div></header>
             <p className="circle-post__caption">{post.caption}</p>
             <div className="circle-workout"><small>Workout complete</small><h2>{post.workout_summary.name ?? "Workout"}</h2><div><span><b className="numeric">{post.workout_summary.sets ?? 0}</b> sets</span><span><b className="numeric">{post.workout_summary.volume ?? 0}</b> {post.workout_summary.units ?? "kg"}</span><span><b className="numeric">{Math.round((post.workout_summary.duration ?? 0) / 60)}</b> min</span></div></div>
             <footer>{(Object.keys(reactionLabels) as Reaction["reaction"][]).map((kind) => { const count = postReactions.filter((item) => item.reaction === kind).length; const active = postReactions.some((item) => item.user_id === userId && item.reaction === kind); return <button key={kind} className={active ? "is-active" : ""} onClick={() => react(post.id, kind)}><Zap/>{reactionLabels[kind]}{count > 0 && <span>{count}</span>}</button>; })}</footer>
@@ -151,12 +156,12 @@ export default function CirclePage() {
         })}
       </div>
     </> : tab === "people" ? <>
-      <label className="circle-search"><Search/><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search by name or username"/></label>
+      <label className="circle-search"><Search/><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search by display name"/></label>
       <section className="circle-people">{people.length === 0 ? <div className="circle-list-empty">No athletes match your search.</div> : people.map((person) => {
         const connection = relationship(person.user_id);
         return <article key={person.user_id}><Avatar profile={person}/><div><strong>{person.display_name}</strong><span>@{person.username}</span></div>{!connection ? <button onClick={() => sendRequest(person.user_id)}><UserPlus/> Add</button> : connection.status === "accepted" ? <button className="is-friend" onClick={() => removeRelationship(connection)}><Check/> Friends</button> : connection.addressee_id === userId ? <button onClick={() => acceptRequest(connection)}><Check/> Accept</button> : <button className="is-muted" onClick={() => removeRelationship(connection)}>Pending</button>}</article>;
       })}</section>
-    </> : <section className="circle-people">{incoming.length === 0 ? <div className="circle-empty"><UsersRound/><h2>No pending requests</h2><p>New friend requests will appear here.</p></div> : incoming.map((request) => { const person = profileById(request.requester_id); return <article key={request.id}><Avatar profile={person}/><div><strong>{person?.display_name ?? "RepMate Athlete"}</strong><span>@{person?.username ?? "athlete"}</span></div><div className="circle-request-actions"><button onClick={() => acceptRequest(request)}><Check/></button><button className="is-muted" onClick={() => removeRelationship(request)}><X/></button></div></article>; })}</section>}
+    </> : <section className="circle-people">{incoming.length === 0 ? <div className="circle-empty"><UsersRound/><h2>No pending requests</h2><p>New friend requests will appear here.</p></div> : incoming.map((request) => { const person = profileById(request.requester_id); return <article key={request.id}><Avatar profile={person}/><div><strong>{person?.display_name ?? "RepMate Member"}</strong><span>@{person?.username ?? "member"}</span></div><div className="circle-request-actions"><button onClick={() => acceptRequest(request)}><Check/></button><button className="is-muted" onClick={() => removeRelationship(request)}><X/></button></div></article>; })}</section>}
     {notice && <div className="program-toast" role="status"><Check/>{notice}</div>}
   </div>;
 }

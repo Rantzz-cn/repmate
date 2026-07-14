@@ -18,10 +18,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     if (!session) return;
     setLoading(true);
     const [profiles, storedPrograms, storedWorkouts, active] = await Promise.all([listRecords<Profile>("profile"), listRecords<Program>("programs"), listRecords<Workout>("workouts"), listRecords<Workout>("activeWorkout")]);
-    const nextProfile = profiles[0] ?? { ...defaultProfile, name: session.user.user_metadata.full_name?.split(" ")[0] || "Athlete", avatarUrl: session.user.user_metadata.avatar_url };
+    const metadataName = session.user.user_metadata.full_name || session.user.user_metadata.name;
+    const emailName = session.user.email?.split("@")[0].replace(/[._-]+/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+    const googleName = metadataName || emailName || "RepMate Member";
+    const storedProfile = profiles[0];
+    const nextProfile = storedProfile
+      ? { ...storedProfile, name: storedProfile.name === "Athlete" ? googleName : storedProfile.name, avatarUrl: storedProfile.avatarUrl || session.user.user_metadata.avatar_url }
+      : { ...defaultProfile, name: googleName, avatarUrl: session.user.user_metadata.avatar_url };
     let nextPrograms = storedPrograms;
     if (!nextPrograms.length) { nextPrograms = [starterProgram]; await saveRecord("programs", starterProgram); }
-    if (!profiles.length) await saveRecord("profile", nextProfile);
+    if (!profiles.length || storedProfile?.name === "Athlete") await saveRecord("profile", nextProfile);
     setProfile(nextProfile); setPrograms(nextPrograms); setWorkouts(storedWorkouts); setActiveWorkout(active[0] ?? null); setLoading(false);
   }, [session]);
   useEffect(() => {
