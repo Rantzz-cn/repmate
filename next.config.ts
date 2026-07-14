@@ -23,6 +23,7 @@ const offlineRoutes = [
   "/app/exercises",
   "/app/progress",
   "/app/profile",
+  "/app/circle",
   "/app/workout",
   "/offline",
 ];

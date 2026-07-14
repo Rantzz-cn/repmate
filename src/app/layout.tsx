@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import "./circle.css";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { PwaRegister } from "@/components/pwa-register";
 

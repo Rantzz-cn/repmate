@@ -2,14 +2,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { BarChart3, BookOpenText, Dumbbell, House, UserRound } from "lucide-react";
+import { BarChart3, BookOpenText, Dumbbell, House, UserRound, UsersRound } from "lucide-react";
 import { useEffect } from "react";
 import { useAuth } from "./providers/auth-provider";
 import { AppProvider } from "./providers/app-provider";
 import { cn } from "@/lib/utils";
 import { AppLoading } from "./app-loading";
 
-const nav = [{ href: "/app", label: "Today", icon: House },{ href: "/app/programs", label: "Program", icon: BookOpenText },{ href: "/app/exercises", label: "Exercises", icon: Dumbbell },{ href: "/app/progress", label: "Progress", icon: BarChart3 },{ href: "/app/profile", label: "Profile", icon: UserRound }];
+const nav = [{ href: "/app", label: "Today", icon: House },{ href: "/app/programs", label: "Program", icon: BookOpenText },{ href: "/app/exercises", label: "Exercises", icon: Dumbbell },{ href: "/app/progress", label: "Progress", icon: BarChart3 },{ href: "/app/circle", label: "Circle", icon: UsersRound },{ href: "/app/profile", label: "Profile", icon: UserRound }];
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { session, loading } = useAuth(), router = useRouter(), pathname = usePathname();
   useEffect(() => { if (!loading && !session) router.replace("/login"); }, [loading, router, session]);

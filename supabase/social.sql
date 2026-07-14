@@ -1,20 +1,4 @@
-create table if not exists public.app_data (
-  user_id uuid not null references auth.users(id) on delete cascade,
-  store text not null check (store in ('exercises','programs','workouts','activeWorkout','profile','recovery')),
-  record_id text not null,
-  data jsonb not null default '{}'::jsonb,
-  updated_at timestamptz not null default now(),
-  primary key (user_id, store, record_id)
-);
-
-alter table public.app_data enable row level security;
-create policy "Users read their own RepMate data" on public.app_data for select to authenticated using ((select auth.uid()) = user_id);
-create policy "Users insert their own RepMate data" on public.app_data for insert to authenticated with check ((select auth.uid()) = user_id);
-create policy "Users update their own RepMate data" on public.app_data for update to authenticated using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
-create policy "Users delete their own RepMate data" on public.app_data for delete to authenticated using ((select auth.uid()) = user_id);
-grant select, insert, update, delete on public.app_data to authenticated;
-
--- Gym Circle: public identity, friendships, workout posts, and reactions.
+-- RepMate Gym Circle migration. Run once in the Supabase SQL Editor.
 create table if not exists public.social_profiles (user_id uuid primary key references auth.users(id) on delete cascade, username text not null, display_name text not null, avatar_url text, bio text not null default '', created_at timestamptz not null default now(), updated_at timestamptz not null default now(), constraint social_profiles_username_format check (username ~ '^[a-z0-9_]{3,24}$'));
 create unique index if not exists social_profiles_username_lower_idx on public.social_profiles (lower(username));
 create table if not exists public.friendships (id uuid primary key default gen_random_uuid(), requester_id uuid not null references auth.users(id) on delete cascade, addressee_id uuid not null references auth.users(id) on delete cascade, status text not null default 'pending' check (status in ('pending','accepted')), created_at timestamptz not null default now(), updated_at timestamptz not null default now(), constraint friendships_different_users check (requester_id <> addressee_id), constraint friendships_unique_direction unique (requester_id, addressee_id));
