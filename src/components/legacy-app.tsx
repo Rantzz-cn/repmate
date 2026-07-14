@@ -48,10 +48,10 @@ export function LegacyApp({ route }: { route: "today" | "program" | "exercises" 
     <a className="skip-link" href="#app">Skip to content</a>
     <div className="shell">
       <aside className="sidebar" aria-label="Main navigation">
-        <a className="brand" href="/app" aria-label="RepMate home"><img src="/assets/images/whitelogo.png" alt="RepMate" /></a>
+        <a className="brand" href="#today" aria-label="RepMate home"><img src="/assets/images/whitelogo.png" alt="RepMate" /></a>
         <nav id="desktop-nav" />
       </aside>
-      <div className="mobile-brand"><a href="/app" aria-label="RepMate home"><img src="/assets/images/whitelogo.png" alt="RepMate" /></a></div>
+      <div className="mobile-brand"><a href="#today" aria-label="RepMate home"><img src="/assets/images/whitelogo.png" alt="RepMate" /></a></div>
       <main id="app" tabIndex={-1}><AppLoading route={route} /></main>
     </div>
     <nav id="mobile-nav" className="bottom-nav" aria-label="Main navigation" />

@@ -46,15 +46,7 @@ const navIcons = {
   profile: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
 };
 const navIcon = (name) => `<svg viewBox="0 0 24 24" aria-hidden="true">${navIcons[name]}</svg>`;
-const routePaths = {
-  today: '/app',
-  program: '/app/programs',
-  exercises: '/app/exercises',
-  workout: '/app/workout',
-  progress: '/app/progress',
-  profile: '/app/profile',
-};
-const routeHref = (route) => routePaths[route] || '/app';
+const routeHref = (route) => `#${route || 'today'}`;
 const navHTML = () =>
   nav
     .map(
@@ -356,7 +348,7 @@ function enhanceCleanHome() {
 function workout() {
   const w = state.active;
   if (!w) {
-    location.replace('/app');
+    location.hash = 'today';
     return '';
   }
   const item = w.exercises[w.current],
@@ -679,7 +671,8 @@ function render() {
   if (route === 'today') enhanceCleanHome();
   if (route === 'exercises') {
     enhanceExercises();
-    const detailId = location.pathname.match(/^\/app\/exercises\/([^/]+)$/)?.[1];
+    const detailId = location.hash.match(/^#exercises\/([^/]+)$/)?.[1]
+      || location.pathname.match(/^\/app\/exercises\/([^/]+)$/)?.[1];
     if (detailId) requestAnimationFrame(() => {
       const exercise = exMap().get(decodeURIComponent(detailId));
       if (exercise && !document.querySelector('#modal').open) showExerciseDetails(exercise);
@@ -860,7 +853,7 @@ async function showShareRecap(workout) {
   c.querySelector('[data-recap-save]').onclick = () => { const link = document.createElement('a'); link.href = imageUrl; link.download = `repmate-${workout.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png`; link.click(); };
   c.querySelector('[data-recap-share]').onclick = async () => { const blob = await canvasBlob(canvas), file = new File([blob], 'repmate-workout.png', { type: 'image/png' }); if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) { try { await navigator.share({ title: `${workout.name} workout`, text: 'Workout complete with RepMate.', files: [file] }); } catch (_) {} } else { c.querySelector('[data-recap-save]').click(); toast('Sharing is unavailable here, so the recap was saved instead.'); } };
   d.addEventListener('close', () => {
-    if (location.pathname !== '/app/progress') location.assign('/app/progress');
+    if (currentRoute() !== 'progress') location.hash = 'progress';
   }, { once: true });
   d.showModal();
 }
@@ -972,7 +965,7 @@ function showExerciseDetails(x) {
   d.onclose = () => {
     d.classList.remove('exercise-dialog');
     document.body.classList.remove('detail-open');
-    if (location.pathname.startsWith('/app/exercises/')) location.assign('/app/exercises');
+    if (location.hash.startsWith('#exercises/') || location.pathname.startsWith('/app/exercises/')) location.hash = 'exercises';
   };
   d.showModal();
   mountBodyCharts(x);
@@ -1200,7 +1193,7 @@ document.addEventListener('click', async (e) => {
       d = p.days.find((x) => x.id === b.dataset.day);
     state.active = newWorkout(p, d, exMap());
     await saveActive();
-    location.assign('/app/workout');
+    location.hash = 'workout';
   }
   if (
     a === 'discard-workout' &&
@@ -1260,7 +1253,7 @@ document.addEventListener('click', async (e) => {
     render();
   }
   if (a === 'view-exercise') {
-    location.assign(`/app/exercises/${encodeURIComponent(b.dataset.id)}`);
+    location.hash = `exercises/${encodeURIComponent(b.dataset.id)}`;
   }
   if (a === 'customize-day') {
     const p = state.programs.find((item) => item.id === b.dataset.program),
@@ -1484,7 +1477,7 @@ document.addEventListener('keydown', (e) => {
   const card = e.target.closest('.exercise-card[data-action="view-exercise"]');
   if (card && (e.key === 'Enter' || e.key === ' ')) {
     e.preventDefault();
-    location.assign(`/app/exercises/${encodeURIComponent(card.dataset.id)}`);
+    location.hash = `exercises/${encodeURIComponent(card.dataset.id)}`;
   }
 });
 document.addEventListener('focusin', (e) => {
