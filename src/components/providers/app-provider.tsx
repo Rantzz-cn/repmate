@@ -30,6 +30,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     window.addEventListener("online", online);
     return () => { window.clearTimeout(initialLoad); window.removeEventListener("online", online); };
   }, [refresh]);
+  useEffect(() => {
+    const theme = profile.theme ?? localStorage.getItem("theme") ?? "dark";
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem("theme", theme);
+  }, [profile.theme]);
   const value = useMemo<AppState>(() => ({ loading, profile, programs, workouts, activeWorkout, refresh,
     saveProgram: async (program) => { await saveRecord("programs", program); setPrograms((items) => [...items.filter((item) => item.id !== program.id), program]); },
     removeProgram: async (id) => { await deleteRecord("programs", id); setPrograms((items) => items.filter((item) => item.id !== id)); },

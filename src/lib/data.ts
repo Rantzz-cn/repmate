@@ -59,5 +59,5 @@ export const starterProgram: Program = {
   ],
 };
 
-export const defaultProfile: Profile = { id: "me", name: "Athlete", goal: "Build muscle", units: "kg" };
+export const defaultProfile: Profile = { id: "me", name: "Athlete", goal: "Build muscle", units: "kg", theme: "dark", notifications: false, vibration: true };
 export const weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];

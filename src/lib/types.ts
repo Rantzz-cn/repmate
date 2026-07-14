@@ -19,5 +19,5 @@ export interface Program { id: string; name: string; split: string; active: bool
 export interface WorkoutSet { weight: number; reps: number; rir: number; done: boolean }
 export interface WorkoutExercise { exerciseId: string; sets: WorkoutSet[]; rest: number; minReps: number; maxReps: number }
 export interface Workout { id: string; sessionId: string; programId: string; dayId: string; name: string; startedAt: string; completedAt?: string; duration?: number; current: number; exercises: WorkoutExercise[]; photo?: string | null }
-export interface Profile { id: "me"; name: string; goal: string; units: "kg" | "lb"; avatarUrl?: string; starterProgramInitialized?: boolean }
+export interface Profile { id: "me"; name: string; goal: string; units: "kg" | "lb"; avatarUrl?: string; starterProgramInitialized?: boolean; theme?: "dark" | "light"; notifications?: boolean; vibration?: boolean }
 export type StoreName = "programs" | "workouts" | "activeWorkout" | "profile" | "recovery";
