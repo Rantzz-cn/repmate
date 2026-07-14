@@ -45,10 +45,10 @@ export default function LoginPage() {
   const policy = legal[legalType];
 
   return <>
-    <link rel="stylesheet" href="/legacy/css/reset.css" />
-    <link rel="stylesheet" href="/legacy/css/variables.css" />
-    <link rel="stylesheet" href="/legacy/css/components.css" />
-    <link rel="stylesheet" href="/legacy/css/auth-page.css" />
+    <link rel="stylesheet" href="/styles/reset.css" />
+    <link rel="stylesheet" href="/styles/variables.css" />
+    <link rel="stylesheet" href="/styles/components.css" />
+    <link rel="stylesheet" href="/styles/auth-page.css" />
     <Link className="auth-home" href="/"><img src="/assets/images/whitelogo.png" alt="RepMate" /></Link>
     <main className="auth-layout">
       <section className="auth-promo"><p className="eyebrow">Train With Purpose</p><h1>Your progress<br />starts here.</h1><p>One Google sign-in keeps your routines, sessions, and progress together.</p><img src="/assets/images/repmate.png" alt="RepMate wolf coach" /></section>

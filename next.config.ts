@@ -27,7 +27,7 @@ const offlineRoutes = [
   "/offline",
 ];
 
-const offlineAssetRoots = ["assets", "legacy"];
+const offlineAssetRoots = ["assets", "styles"];
 const collectPublicAssets = (relativeDirectory: string): Array<{ url: string; revision: string }> =>
   readdirSync(path.join(process.cwd(), "public", relativeDirectory), { withFileTypes: true }).flatMap((entry) => {
     const relativePath = path.posix.join(relativeDirectory, entry.name);

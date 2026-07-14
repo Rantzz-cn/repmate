@@ -7,7 +7,7 @@ import { useAuth } from "./auth-provider";
 
 interface AppState {
   loading: boolean; profile: Profile; programs: Program[]; workouts: Workout[]; activeWorkout: Workout | null;
-  saveProgram(program: Program): Promise<void>; removeProgram(id: string): Promise<void>; setActive(workout: Workout | null): Promise<void>; saveWorkout(workout: Workout): Promise<void>; saveProfile(profile: Profile): Promise<void>; refresh(): Promise<void>;
+  saveProgram(program: Program): Promise<void>; removeProgram(id: string): Promise<void>; setActive(workout: Workout | null): Promise<void>; saveWorkout(workout: Workout): Promise<void>; removeWorkout(id: string): Promise<void>; saveProfile(profile: Profile): Promise<void>; refresh(): Promise<void>;
 }
 const AppContext = createContext<AppState | null>(null);
 
@@ -35,6 +35,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     removeProgram: async (id) => { await deleteRecord("programs", id); setPrograms((items) => items.filter((item) => item.id !== id)); },
     setActive: async (workout) => { if (workout) await saveRecord("activeWorkout", { ...workout, id: "active" }); else await deleteRecord("activeWorkout", "active"); setActiveWorkout(workout); },
     saveWorkout: async (workout) => { await saveRecord("workouts", workout); setWorkouts((items) => [...items.filter((item) => item.id !== workout.id), workout]); },
+    removeWorkout: async (id) => { await deleteRecord("workouts", id); setWorkouts((items) => items.filter((item) => item.id !== id)); },
     saveProfile: async (next) => { await saveRecord("profile", next); setProfile(next); },
   }), [activeWorkout, loading, profile, programs, refresh, workouts]);
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

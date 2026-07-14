@@ -14,8 +14,8 @@ function landingMarkup() {
 
 export default function LandingPage() {
   return <>
-    <link rel="stylesheet" href="/legacy/css/landing.css" />
-    <link rel="stylesheet" href="/legacy/css/numeric.css" />
+    <link rel="stylesheet" href="/styles/landing.css" />
+    <link rel="stylesheet" href="/styles/numeric.css" />
     <div dangerouslySetInnerHTML={{ __html: landingMarkup() }} />
     <LandingEnhancements />
   </>;

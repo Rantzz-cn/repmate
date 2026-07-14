@@ -1,7 +1,0 @@
-﻿/* Legacy stylesheet retained for compatibility. The modular styles are linked by index.html. */
-@import url('./reset.css');
-@import url('./variables.css');
-@import url('./components.css');
-@import url('./layout.css');
-@import url('./responsive.css');
-

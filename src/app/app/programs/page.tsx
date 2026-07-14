@@ -1,5 +1,17 @@
-import { LegacyApp } from "@/components/legacy-app";
+"use client";
+import { useState } from "react";
+import { Copy, Pencil, Play, Plus, Trash2 } from "lucide-react";
+import { PageHeader } from "@/components/page-header";
+import { useRepMate } from "@/components/providers/app-provider";
+import { RoutineEditor } from "@/components/routine-editor";
+import { Button } from "@/components/ui/button";
+import type { Program, Routine } from "@/lib/types";
+import { weekdays } from "@/lib/data";
+import { createWorkout } from "@/lib/workouts";
+import { useRouter } from "next/navigation";
 
-export default function ProgramsPage() {
-  return <LegacyApp route="program" />;
-}
+export default function ProgramsPage(){const state=useRepMate(),router=useRouter();const [editing,setEditing]=useState<{program:Program;routine:Routine}|null>(null);
+const create=async()=>{const id=crypto.randomUUID();await state.saveProgram({id,name:"My Program",split:"Custom",active:!state.programs.length,days:[]})};
+const addRoutine=async(program:Program)=>{const routine={id:crypto.randomUUID(),name:`Workout ${program.days.length+1}`,weekday:1,muscles:[],exercises:[]};await state.saveProgram({...program,days:[...program.days,routine]});setEditing({program:{...program,days:[...program.days,routine]},routine})};
+const start=async(program:Program,routine:Routine)=>{await state.setActive(createWorkout(program,routine));router.push("/app/workout")};
+return <div className="app-page"><PageHeader eyebrow="Plan your training" title="Program" action={<Button onClick={create} variant="secondary"><Plus className="size-4"/>New</Button>}/>{state.programs.map(program=><section key={program.id} className="rounded-3xl border border-white/10 bg-[#111] p-4 sm:p-5"><header className="flex items-start justify-between border-b border-white/10 pb-4"><div><p className="eyebrow">{program.split}</p><h2 className="mt-1 text-xl font-semibold">{program.name}</h2></div><span className="rounded-full bg-white/5 px-2.5 py-1 text-[10px] text-zinc-400">{program.active?"Active":"Inactive"}</span></header><div className="mt-3 grid gap-2">{program.days.map((routine,index)=><article key={routine.id} className="flex items-center gap-3 rounded-2xl bg-[#1a1a1a] p-3"><span className="numeric text-xs text-zinc-600">{String(index+1).padStart(2,"0")}</span><div className="min-w-0 flex-1"><h3 className="font-semibold">{routine.name}</h3><p className="truncate text-xs text-zinc-500">{routine.exercises.length} exercises · {weekdays[routine.weekday]} · {routine.muscles.join(", ")}</p></div><button onClick={()=>setEditing({program,routine})} className="grid size-10 place-items-center rounded-xl border border-white/10" aria-label={`Edit ${routine.name}`}><Pencil className="size-4"/></button><button disabled={!routine.exercises.length} onClick={()=>start(program,routine)} className="grid size-10 place-items-center rounded-xl bg-white text-black disabled:opacity-25" aria-label={`Start ${routine.name}`}><Play className="size-4"/></button></article>)}<button onClick={()=>addRoutine(program)} className="flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-dashed border-white/15 text-sm text-zinc-400"><Plus className="size-4"/>Add routine</button></div><footer className="mt-4 flex flex-wrap gap-2 border-t border-white/10 pt-4"><Button variant="secondary" onClick={()=>state.saveProgram({...program,id:crypto.randomUUID(),name:`${program.name} Copy`,active:false})}><Copy className="size-4"/>Copy plan</Button>{!program.active&&<Button variant="secondary" onClick={()=>Promise.all(state.programs.map(p=>state.saveProgram({...p,active:p.id===program.id})))}>Activate</Button>}<Button variant="danger" onClick={()=>state.removeProgram(program.id)}><Trash2 className="size-4"/>Delete</Button></footer></section>)}{editing&&<RoutineEditor key={editing.routine.id} program={editing.program} routine={editing.routine} open onOpenChange={open=>!open&&setEditing(null)} onSave={state.saveProgram}/>}</div>}
