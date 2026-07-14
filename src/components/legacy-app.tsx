@@ -52,7 +52,7 @@ export function LegacyApp({ route }: { route: "today" | "program" | "exercises" 
         <nav id="desktop-nav" />
       </aside>
       <div className="mobile-brand"><a href="/app" aria-label="RepMate home"><img src="/assets/images/whitelogo.png" alt="RepMate" /></a></div>
-      <main id="app" tabIndex={-1}><AppLoading /></main>
+      <main id="app" tabIndex={-1}><AppLoading route={route} /></main>
     </div>
     <nav id="mobile-nav" className="bottom-nav" aria-label="Main navigation" />
     <div id="timer-float" className="timer-float hidden" aria-live="polite" />
