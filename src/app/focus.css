@@ -1,0 +1,53 @@
+.app-shell--focus .app-main {
+  padding-bottom: 34px;
+}
+
+.focus-page {
+  animation: focus-page-in 0.2s ease-out both;
+}
+
+.focus-page.is-leaving {
+  pointer-events: none;
+  animation: focus-page-out 0.15s ease-in both;
+}
+
+.focus-back {
+  display: inline-flex;
+  width: max-content;
+  min-height: 40px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #151515;
+  color: #d8d8d8;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.focus-back svg { width: 16px; }
+.focus-back:hover { background: #1d1d1d; }
+.focus-back:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+@keyframes focus-page-in {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes focus-page-out {
+  to { opacity: 0; transform: translateY(5px); }
+}
+
+html[data-theme="light"] .focus-back {
+  border-color: #d8d8d4;
+  background: #fff;
+  color: #222;
+}
+
+html[data-theme="light"] .focus-back:hover { background: #ececea; }
+
+@media (prefers-reduced-motion: reduce) {
+  .focus-page,
+  .focus-page.is-leaving { animation: none; }
+}

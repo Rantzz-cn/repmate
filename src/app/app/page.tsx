@@ -51,6 +51,7 @@ export default function TodayPage() {
         <span className="dashboard-shortcut__icon"><BarChart3 /></span>
         <div className="dashboard-shortcut__copy"><small>This week</small><h2>Progress</h2><p>Review your completed training.</p></div>
         <div className="dashboard-shortcut__metrics"><span><b className="numeric">{volume.toLocaleString()}</b> {state.profile.units}</span><span><b className="numeric">{weekly.length}</b> sessions</span></div>
+        <span className="dashboard-shortcut__action">View progress</span>
       </Link>
       <Link href="/app/exercises" className="dashboard-shortcut dashboard-shortcut--exercises">
         <span className="dashboard-shortcut__icon"><Dumbbell /></span>

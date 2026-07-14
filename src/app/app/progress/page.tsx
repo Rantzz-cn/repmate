@@ -3,6 +3,7 @@
 import { CheckCircle2, Dumbbell, Share2, Trash2, TriangleAlert } from "lucide-react";
 import { useRef, useState } from "react";
 import { PageHeader } from "@/components/page-header";
+import { FocusBackButton } from "@/components/focus-back-button";
 import { useRepMate } from "@/components/providers/app-provider";
 import { ShareRecap } from "@/components/share-recap";
 import { Button } from "@/components/ui/button";
@@ -37,7 +38,8 @@ export default function ProgressPage() {
     notify(`${name} removed from workout history.`);
   };
 
-  return <div className="app-page">
+  return <div className="app-page focus-page">
+    <FocusBackButton />
     <PageHeader eyebrow="Strength over time" title="Progress" />
     <section className="grid grid-cols-2 gap-3">
       {[[completed.length, "Workouts"], [completed.filter((workout) => now - Date.parse(workout.completedAt!) < 604800000).length, "This week"], [totals.sets, "Total sets"], [`${Math.round(totals.volume).toLocaleString()} ${state.profile.units}`, "Total volume"]].map(([value, label]) => <div key={label} className="flex min-h-28 flex-col justify-between rounded-2xl border border-white/10 bg-[#111] p-4"><strong className="numeric text-xl">{value}</strong><span className="text-sm text-zinc-500">{label}</span></div>)}
