@@ -1,5 +1,52 @@
 @import "tailwindcss";
 
+/* Active workout preview: keep media and copy in distinct, stable regions. */
+.app-page:has(> header:first-child .eyebrow) > header:first-child + section:has(> .h-64) {
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: #111;
+}
+.app-page:has(> header:first-child .eyebrow) > header:first-child + section > .h-64 {
+  display: grid;
+  width: 100%;
+  height: clamp(220px, 64vw, 280px);
+  place-items: center;
+  overflow: hidden;
+  background: #fff;
+}
+.app-page:has(> header:first-child .eyebrow) > header:first-child + section > .h-64 > img {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100%;
+  object-fit: contain;
+}
+.app-page:has(> header:first-child .eyebrow) > header:first-child + section > .p-5 {
+  position: relative;
+  z-index: 1;
+  padding: 18px 20px 20px;
+  background: #111;
+  color: #f7f7f7;
+}
+.app-page:has(> header:first-child .eyebrow) > header:first-child + section > .p-5 h2 {
+  margin-top: 6px;
+  font-family: var(--font-doto), "Courier New", monospace;
+  font-size: clamp(1.35rem, 6vw, 1.75rem);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -.035em;
+}
+.app-page:has(> header:first-child .eyebrow) > header:first-child + section > .p-5 h2 + p {
+  margin-top: 9px;
+  line-height: 1.45;
+}
+html[data-theme=light] .app-page:has(> header:first-child .eyebrow) > header:first-child + section > .p-5 {
+  background: #fff;
+  color: #111;
+}
+
 :root{--background:#050505;--foreground:#f7f7f7;--card:#121212;--muted:#9a9a9a;--line:rgba(255,255,255,.1);--font-inter:Inter,Arial,sans-serif;--font-oswald:"Barlow Condensed","Arial Narrow",sans-serif;--font-barlow:"Barlow Condensed","Arial Narrow",sans-serif;--font-doto:Doto,"Courier New",monospace}
 *{box-sizing:border-box}html{background:var(--background);overflow-x:hidden}body{min-height:100dvh;margin:0;overflow-x:hidden;background:#050505;color:var(--foreground);font-family:var(--font-inter),Arial,sans-serif}button,a,input,select{font:inherit}button{cursor:pointer}::selection{background:#fff;color:#000}
 .grid-bg{background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:38px 38px}
