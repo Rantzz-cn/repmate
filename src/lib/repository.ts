@@ -133,7 +133,7 @@ export async function saveRecord<T extends { id: string }>(store: StoreName, val
   await write("records", record);
   await write("outbox", { ...record, operation: "put", attempts: 0 } satisfies OutboxRecord<T>);
   await updatePendingState(uid);
-  if (navigator.onLine) await syncOutbox();
+  if (navigator.onLine) void syncOutbox().catch(() => undefined);
   return value;
 }
 
@@ -144,5 +144,5 @@ export async function deleteRecord(store: StoreName, id: string) {
   await drop("records", key);
   await write("outbox", { key, userId: uid, store, recordId: id, data: null, updatedAt, operation: "delete", attempts: 0 });
   await updatePendingState(uid);
-  if (navigator.onLine) await syncOutbox();
+  if (navigator.onLine) void syncOutbox().catch(() => undefined);
 }

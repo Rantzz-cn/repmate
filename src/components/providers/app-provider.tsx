@@ -16,14 +16,26 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const { session } = useAuth();
   const [loading, setLoading] = useState(true), [profile, setProfile] = useState(defaultProfile), [programs, setPrograms] = useState<Program[]>([]), [workouts, setWorkouts] = useState<Workout[]>([]), [activeWorkout, setActiveWorkout] = useState<Workout | null>(null), [sync, setSync] = useState(getSyncSnapshot);
   const activeWriteQueue = useRef<Promise<void>>(Promise.resolve());
-  const queueActiveWrite = useCallback((workout: Workout | null) => {
+  const activeWriteTimer = useRef<number | null>(null);
+  const pendingActiveWrite = useRef<Workout | null>(null);
+  const queueActiveWrite = useCallback((workout: Workout | null, immediate = false) => {
+    pendingActiveWrite.current = workout;
+    if (activeWriteTimer.current) window.clearTimeout(activeWriteTimer.current);
+    const persist = () => {
+      activeWriteTimer.current = null;
+      const next = pendingActiveWrite.current;
+      pendingActiveWrite.current = null;
     activeWriteQueue.current = activeWriteQueue.current
       .catch(() => undefined)
       .then(async () => {
-        if (workout) await saveRecord("activeWorkout", { ...workout, id: "active" });
+          if (next) await saveRecord("activeWorkout", { ...next, id: "active" });
         else await deleteRecord("activeWorkout", "active");
       });
-    return activeWriteQueue.current;
+      return activeWriteQueue.current;
+    };
+    if (immediate) return persist();
+    activeWriteTimer.current = window.setTimeout(persist, 280);
+    return Promise.resolve();
   }, []);
   const refresh = useCallback(async () => {
     if (!session) return;
@@ -59,7 +71,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     retrySync: async () => { await syncOutbox({ force: true }); },
     saveProgram: async (program) => { await saveRecord("programs", program); setPrograms((items) => [...items.filter((item) => item.id !== program.id), program]); },
     removeProgram: async (id) => { await deleteRecord("programs", id); setPrograms((items) => items.filter((item) => item.id !== id)); },
-    setActive: async (workout) => { setActiveWorkout(workout); await queueActiveWrite(workout); },
+    setActive: async (workout) => { setActiveWorkout(workout); await queueActiveWrite(workout, true); },
     updateActive: (update) => { setActiveWorkout((current) => { if (!current) return current; const next = update(current); void queueActiveWrite(next); return next; }); },
     saveWorkout: async (workout) => { await saveRecord("workouts", workout); setWorkouts((items) => [...items.filter((item) => item.id !== workout.id), workout]); },
     removeWorkout: async (id) => { await deleteRecord("workouts", id); setWorkouts((items) => items.filter((item) => item.id !== id)); },

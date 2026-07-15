@@ -21,6 +21,8 @@ export default function WorkoutPage() {
   const [invalidSet, setInvalidSet] = useState<number | null>(null);
   const [validationMessage, setValidationMessage] = useState("");
   const [finishOpen, setFinishOpen] = useState(false);
+  const [finishing, setFinishing] = useState(false);
+  const [finishError, setFinishError] = useState("");
   const [photo, setPhoto] = useState<string | null>(null);
   const [recap, setRecap] = useState<Workout | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -114,9 +116,32 @@ export default function WorkoutPage() {
     setValidationMessage("");
     update((value) => ({ ...value, current: Math.max(0, Math.min(value.exercises.length - 1, value.current + offset)) }));
   };
-  const requestFinish = () => { if (!showIncompleteSet()) setFinishOpen(true); };
-  const choosePhoto = (file?: File) => { if (!file) return; const reader = new FileReader(); reader.onload = () => setPhoto(String(reader.result)); reader.readAsDataURL(file); };
-  const finish = async () => { const complete = { ...workout, id: workout.sessionId, completedAt: new Date().toISOString(), duration: Math.round((Date.now() - Date.parse(workout.startedAt)) / 1000), photo }; await state.saveWorkout(complete); await state.setActive(null); setFinishOpen(false); setRecap(complete); };
+  const requestFinish = () => { if (!showIncompleteSet()) { setFinishError(""); setFinishOpen(true); } };
+  const choosePhoto = (file?: File) => {
+    if (!file) return;
+    setFinishError("");
+    if (file.size > 8 * 1024 * 1024) { setFinishError("Choose a photo smaller than 8 MB."); return; }
+    if (!(["image/jpeg", "image/png", "image/webp"].includes(file.type))) { setFinishError("Choose a JPG, PNG, or WebP photo."); return; }
+    const reader = new FileReader();
+    reader.onerror = () => setFinishError("That photo could not be opened. Try another one.");
+    reader.onload = () => setPhoto(String(reader.result));
+    reader.readAsDataURL(file);
+  };
+  const finish = async (sessionPhoto: string | null) => {
+    const complete = { ...workout, id: workout.sessionId, completedAt: new Date().toISOString(), duration: Math.round((Date.now() - Date.parse(workout.startedAt)) / 1000), photo: sessionPhoto };
+    setFinishError("");
+    setFinishing(true);
+    try {
+      await state.saveWorkout(complete);
+      await state.setActive(null);
+      setFinishOpen(false);
+      setRecap(complete);
+    } catch {
+      setFinishError("Your workout could not be saved yet. Keep this screen open and try again.");
+    } finally {
+      setFinishing(false);
+    }
+  };
 
   return <div className="app-page">
     <header><p className="eyebrow">Active workout · {workout.current + 1} of {workout.exercises.length}</p><h1 className="display page-title mt-2">{workout.name}</h1></header>
@@ -129,7 +154,7 @@ export default function WorkoutPage() {
     </section>
     {rest > 0 && <section className="sticky bottom-24 z-40 rounded-3xl border border-white/10 bg-[#181818]/95 p-4 shadow-2xl backdrop-blur-xl"><div className="flex items-center justify-between"><div><p className="eyebrow">Rest timer</p><p className="text-xs text-zinc-500">{paused ? "Paused" : exercise.name}</p></div><strong className="numeric text-3xl">{String(Math.floor(rest / 60)).padStart(2, "0")}:{String(rest % 60).padStart(2, "0")}</strong></div><div className="mt-3 grid grid-cols-4 gap-2"><button onClick={() => adjustRest(-30)} className="h-10 rounded-xl bg-zinc-900 text-xs">−30</button><button onClick={togglePause} aria-label={paused ? "Resume rest timer" : "Pause rest timer"} className="grid h-10 place-items-center rounded-xl bg-zinc-900">{paused ? <Play className="size-4" /> : <Pause className="size-4" />}</button><button onClick={() => adjustRest(30)} className="h-10 rounded-xl bg-zinc-900 text-xs">+30</button><button onClick={() => { setRest(0); timerEndsAt.current = null; }} aria-label="Skip rest timer" className="grid h-10 place-items-center rounded-xl bg-zinc-900"><SkipForward className="size-4" /></button></div></section>}
     <div className="grid grid-cols-[1fr_2fr] gap-2"><Button variant="secondary" disabled={!workout.current} onClick={() => move(-1)}>Previous</Button>{workout.current === workout.exercises.length - 1 ? <Button onClick={requestFinish}>Finish workout</Button> : <Button onClick={() => move(1)}>Next exercise</Button>}</div>
-    <Dialog open={finishOpen} onOpenChange={setFinishOpen}><DialogContent className="max-w-sm p-6"><DialogTitle>Save this session</DialogTitle><DialogDescription className="mt-2">Optionally add a photo to remember today&apos;s progress.</DialogDescription><input ref={fileRef} hidden type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => choosePhoto(event.target.files?.[0])} /><button onClick={() => fileRef.current?.click()} className="mt-5 grid min-h-40 w-full place-items-center overflow-hidden rounded-2xl border border-dashed border-white/20 bg-[#181818]">{photo ? <img src={photo} alt="Session preview" className="h-48 w-full object-cover" /> : <span className="text-center"><Plus className="mx-auto mb-2 size-6" /><strong className="text-sm">Add session photo</strong><small className="mt-1 block text-zinc-500">JPG, PNG or WebP</small></span>}</button><div className="mt-5 grid grid-cols-2 gap-2"><Button variant="secondary" onClick={() => setPhoto(null)}>Skip photo</Button><Button onClick={finish}>Finish workout</Button></div></DialogContent></Dialog>
+    <Dialog open={finishOpen} onOpenChange={(open) => { if (!finishing) setFinishOpen(open); }}><DialogContent className="max-w-sm p-5 sm:p-6"><div className="pr-12"><p className="eyebrow">Workout complete</p><DialogTitle className="mt-2">Save your workout</DialogTitle><DialogDescription className="mt-2 leading-5">Your session is ready. Add a photo if you want, or finish without one.</DialogDescription></div><input ref={fileRef} hidden type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => choosePhoto(event.target.files?.[0])} /><button type="button" disabled={finishing} onClick={() => fileRef.current?.click()} className="mt-5 grid min-h-36 w-full place-items-center overflow-hidden rounded-2xl border border-dashed border-white/20 bg-[#181818] transition hover:border-white/35 disabled:opacity-50">{photo ? <span className="relative block h-44 w-full"><img src={photo} alt="Session preview" className="h-full w-full object-cover" /><span className="absolute inset-x-3 bottom-3 rounded-xl bg-black/75 px-3 py-2 text-xs text-white backdrop-blur">Tap to choose a different photo</span></span> : <span className="text-center"><span className="mx-auto mb-3 grid size-11 place-items-center rounded-xl border border-white/10 bg-zinc-900"><Plus className="size-5" /></span><strong className="block text-sm font-semibold">Add an optional photo</strong><small className="mt-1 block text-zinc-500">JPG, PNG or WebP · up to 8 MB</small></span>}</button>{finishError && <p role="alert" className="mt-3 rounded-xl border border-red-500/25 bg-red-500/10 p-3 text-xs leading-5 text-red-300">{finishError}</p>}<div className="mt-5 grid gap-2"><Button type="button" disabled={finishing} onClick={() => finish(photo)}>{finishing ? "Saving workout…" : "Save workout"}</Button><Button type="button" disabled={finishing} variant="ghost" onClick={() => finish(null)}>Finish without photo</Button></div></DialogContent></Dialog>
     {recap && <ShareRecap workout={recap} profile={state.profile} onClose={() => { setRecap(null); router.replace("/app/progress"); }} />}
   </div>;
 }
