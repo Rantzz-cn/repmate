@@ -29,12 +29,12 @@ const source: Array<[string, Muscle, string, "compound" | "isolation", number, M
   ["Romanian Deadlift","hamstrings","barbell","compound",180,["glutes","back","core"]],
   ["Leg Curl","hamstrings","machine","isolation",60,["calves"]],
   ["Barbell Glute Bridge","glutes","barbell","compound",180,["hamstrings","core"]],
-  ["Dumbbell Single-Leg Split Squat","glutes","dumbbell","compound",120,["quadriceps","hamstrings"]],
+  ["Dumbbell Single-Leg Split Squat","quadriceps","dumbbell","compound",120,["glutes","hamstrings"]],
   ["Standing Calf Raise","calves","machine","isolation",60,[]],
   ["Seated Calf Raise","calves","machine","isolation",60,[]],
   ["Cable Kneeling Crunch","core","cable","isolation",60,[]],
   ["Plank","core","bodyweight","isolation",60,["shoulders","glutes"]],
-  ["Hanging Leg Raise","core","bodyweight","isolation",60,["quadriceps"]],
+  ["Hanging Leg Raise","core","bodyweight","isolation",60,[]],
 ];
 
 const slug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
