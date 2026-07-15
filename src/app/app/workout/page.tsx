@@ -66,7 +66,7 @@ export default function WorkoutPage() {
 
   const current = workout.exercises[workout.current];
   const exercise = exercises.find((item) => item.id === current.exerciseId)!;
-  const update = (fn: (value: Workout) => Workout) => state.setActive(fn(workout));
+  const update = (fn: (value: Workout) => Workout) => state.updateActive(fn);
   const updateSet = (index: number, patch: Partial<WorkoutSet>) => {
     setInvalidSet(null);
     setValidationMessage("");

@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { defaultProfile } from "@/lib/data";
 import { deleteRecord, getSyncSnapshot, listRecords, saveRecord, subscribeSync, syncOutbox, type SyncSnapshot } from "@/lib/repository";
 import type { Profile, Program, Workout } from "@/lib/types";
@@ -8,13 +8,23 @@ import { useAuth } from "./auth-provider";
 interface AppState {
   loading: boolean; profile: Profile; programs: Program[]; workouts: Workout[]; activeWorkout: Workout | null; sync: SyncSnapshot;
   retrySync(): Promise<void>;
-  saveProgram(program: Program): Promise<void>; removeProgram(id: string): Promise<void>; setActive(workout: Workout | null): Promise<void>; saveWorkout(workout: Workout): Promise<void>; removeWorkout(id: string): Promise<void>; saveProfile(profile: Profile): Promise<void>; refresh(): Promise<void>;
+  saveProgram(program: Program): Promise<void>; removeProgram(id: string): Promise<void>; setActive(workout: Workout | null): Promise<void>; updateActive(update: (workout: Workout) => Workout): void; saveWorkout(workout: Workout): Promise<void>; removeWorkout(id: string): Promise<void>; saveProfile(profile: Profile): Promise<void>; refresh(): Promise<void>;
 }
 const AppContext = createContext<AppState | null>(null);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const { session } = useAuth();
   const [loading, setLoading] = useState(true), [profile, setProfile] = useState(defaultProfile), [programs, setPrograms] = useState<Program[]>([]), [workouts, setWorkouts] = useState<Workout[]>([]), [activeWorkout, setActiveWorkout] = useState<Workout | null>(null), [sync, setSync] = useState(getSyncSnapshot);
+  const activeWriteQueue = useRef<Promise<void>>(Promise.resolve());
+  const queueActiveWrite = useCallback((workout: Workout | null) => {
+    activeWriteQueue.current = activeWriteQueue.current
+      .catch(() => undefined)
+      .then(async () => {
+        if (workout) await saveRecord("activeWorkout", { ...workout, id: "active" });
+        else await deleteRecord("activeWorkout", "active");
+      });
+    return activeWriteQueue.current;
+  }, []);
   const refresh = useCallback(async () => {
     if (!session) return;
     setLoading(true);
@@ -49,11 +59,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     retrySync: async () => { await syncOutbox({ force: true }); },
     saveProgram: async (program) => { await saveRecord("programs", program); setPrograms((items) => [...items.filter((item) => item.id !== program.id), program]); },
     removeProgram: async (id) => { await deleteRecord("programs", id); setPrograms((items) => items.filter((item) => item.id !== id)); },
-    setActive: async (workout) => { if (workout) await saveRecord("activeWorkout", { ...workout, id: "active" }); else await deleteRecord("activeWorkout", "active"); setActiveWorkout(workout); },
+    setActive: async (workout) => { setActiveWorkout(workout); await queueActiveWrite(workout); },
+    updateActive: (update) => { setActiveWorkout((current) => { if (!current) return current; const next = update(current); void queueActiveWrite(next); return next; }); },
     saveWorkout: async (workout) => { await saveRecord("workouts", workout); setWorkouts((items) => [...items.filter((item) => item.id !== workout.id), workout]); },
     removeWorkout: async (id) => { await deleteRecord("workouts", id); setWorkouts((items) => items.filter((item) => item.id !== id)); },
     saveProfile: async (next) => { await saveRecord("profile", next); setProfile(next); },
-  }), [activeWorkout, loading, profile, programs, refresh, sync, workouts]);
+  }), [activeWorkout, loading, profile, programs, queueActiveWrite, refresh, sync, workouts]);
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
 export function useRepMate() { const context = useContext(AppContext); if (!context) throw new Error("AppProvider missing"); return context; }
