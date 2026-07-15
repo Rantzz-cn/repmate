@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { AppLoading } from "./app-loading";
 import { Onboarding } from "./onboarding";
 import { supabase } from "@/lib/supabase";
+import { GoriMateChat } from "./gori-mate-chat";
 
 const nav = [{ href: "/app", label: "Dashboard", icon: House },{ href: "/app/programs", label: "Program", icon: BookOpenText },{ href: "/app/circle", label: "Circle", icon: UsersRound },{ href: "/app/profile", label: "Profile", icon: UserRound }];
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -52,8 +53,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
 function OnboardingGate() {
   const { loading, profile } = useRepMate();
-  if (loading || profile.onboardingComplete !== false) return null;
-  return <Onboarding/>;
+  if (loading) return null;
+  if (profile.onboardingComplete !== false) return <GoriMateChat/>;
+  return <><Onboarding/><GoriMateChat/></>;
 }
 
 function SyncStatusIndicator({ compact = false }: { compact?: boolean }) {
