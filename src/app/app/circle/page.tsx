@@ -75,9 +75,9 @@ export default function CirclePage() {
     setPosts((postResult.data as Post[]) ?? []);
     setReactions((reactionResult.data as Reaction[]) ?? []);
     setLoading(false);
-  }, [session, state.profile.avatarUrl, state.profile.name, userId]);
+  }, [session, state.profile.avatarUrl, userId]);
 
-  useEffect(() => { void loadCircle(); }, [loadCircle]);
+  useEffect(() => { const initialLoad = window.setTimeout(() => void loadCircle(), 0); return () => window.clearTimeout(initialLoad); }, [loadCircle]);
 
   const latestWorkout = useMemo(() => state.workouts.filter((workout) => workout.completedAt).sort((a, b) => Date.parse(b.completedAt!) - Date.parse(a.completedAt!))[0], [state.workouts]);
   const incoming = friendships.filter((item) => item.addressee_id === userId && item.status === "pending");

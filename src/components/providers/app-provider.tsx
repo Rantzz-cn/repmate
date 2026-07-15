@@ -1,19 +1,20 @@
 "use client";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { defaultProfile, starterProgram } from "@/lib/data";
-import { deleteRecord, listRecords, saveRecord, syncOutbox } from "@/lib/repository";
+import { defaultProfile } from "@/lib/data";
+import { deleteRecord, getSyncSnapshot, listRecords, saveRecord, subscribeSync, syncOutbox, type SyncSnapshot } from "@/lib/repository";
 import type { Profile, Program, Workout } from "@/lib/types";
 import { useAuth } from "./auth-provider";
 
 interface AppState {
-  loading: boolean; profile: Profile; programs: Program[]; workouts: Workout[]; activeWorkout: Workout | null;
+  loading: boolean; profile: Profile; programs: Program[]; workouts: Workout[]; activeWorkout: Workout | null; sync: SyncSnapshot;
+  retrySync(): Promise<void>;
   saveProgram(program: Program): Promise<void>; removeProgram(id: string): Promise<void>; setActive(workout: Workout | null): Promise<void>; saveWorkout(workout: Workout): Promise<void>; removeWorkout(id: string): Promise<void>; saveProfile(profile: Profile): Promise<void>; refresh(): Promise<void>;
 }
 const AppContext = createContext<AppState | null>(null);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const { session } = useAuth();
-  const [loading, setLoading] = useState(true), [profile, setProfile] = useState(defaultProfile), [programs, setPrograms] = useState<Program[]>([]), [workouts, setWorkouts] = useState<Workout[]>([]), [activeWorkout, setActiveWorkout] = useState<Workout | null>(null);
+  const [loading, setLoading] = useState(true), [profile, setProfile] = useState(defaultProfile), [programs, setPrograms] = useState<Program[]>([]), [workouts, setWorkouts] = useState<Workout[]>([]), [activeWorkout, setActiveWorkout] = useState<Workout | null>(null), [sync, setSync] = useState(getSyncSnapshot);
   const refresh = useCallback(async () => {
     if (!session) return;
     setLoading(true);
@@ -22,33 +23,37 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const emailName = session.user.email?.split("@")[0].replace(/[._-]+/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
     const googleName = metadataName || emailName || "RepMate Member";
     const storedProfile = profiles[0];
+    const existingUser = Boolean(storedProfile || storedPrograms.length || storedWorkouts.length);
     const nextProfile = storedProfile
-      ? { ...storedProfile, name: storedProfile.name === "Athlete" ? googleName : storedProfile.name, avatarUrl: storedProfile.avatarUrl || session.user.user_metadata.avatar_url }
-      : { ...defaultProfile, name: googleName, avatarUrl: session.user.user_metadata.avatar_url };
-    let nextPrograms = storedPrograms;
-    if (!nextPrograms.length) { nextPrograms = [starterProgram]; await saveRecord("programs", starterProgram); }
-    if (!profiles.length || storedProfile?.name === "Athlete") await saveRecord("profile", nextProfile);
-    setProfile(nextProfile); setPrograms(nextPrograms); setWorkouts(storedWorkouts); setActiveWorkout(active[0] ?? null); setLoading(false);
+      ? { ...storedProfile, name: storedProfile.name === "Athlete" ? googleName : storedProfile.name, avatarUrl: storedProfile.avatarUrl || session.user.user_metadata.avatar_url, onboardingComplete: storedProfile.onboardingComplete ?? true }
+      : { ...defaultProfile, name: googleName, avatarUrl: session.user.user_metadata.avatar_url, onboardingComplete: existingUser };
+    const profileChanged = !profiles.length || storedProfile?.name === "Athlete" || storedProfile?.onboardingComplete === undefined;
+    if (profileChanged) await saveRecord("profile", nextProfile);
+    setProfile(nextProfile); setPrograms(storedPrograms); setWorkouts(storedWorkouts); setActiveWorkout(active[0] ?? null); setLoading(false);
   }, [session]);
   useEffect(() => {
     const initialLoad = window.setTimeout(() => void refresh(), 0);
-    const online = () => void syncOutbox();
+    const online = () => void syncOutbox().catch(() => undefined);
     window.addEventListener("online", online);
-    return () => { window.clearTimeout(initialLoad); window.removeEventListener("online", online); };
+    const offline = () => setSync((current) => ({ ...current, phase: "offline" }));
+    window.addEventListener("offline", offline);
+    const unsubscribe = subscribeSync(setSync);
+    return () => { window.clearTimeout(initialLoad); window.removeEventListener("online", online); window.removeEventListener("offline", offline); unsubscribe(); };
   }, [refresh]);
   useEffect(() => {
     const theme = profile.theme ?? localStorage.getItem("theme") ?? "dark";
     document.documentElement.dataset.theme = theme;
     localStorage.setItem("theme", theme);
   }, [profile.theme]);
-  const value = useMemo<AppState>(() => ({ loading, profile, programs, workouts, activeWorkout, refresh,
+  const value = useMemo<AppState>(() => ({ loading, profile, programs, workouts, activeWorkout, sync, refresh,
+    retrySync: async () => { await syncOutbox({ force: true }); },
     saveProgram: async (program) => { await saveRecord("programs", program); setPrograms((items) => [...items.filter((item) => item.id !== program.id), program]); },
     removeProgram: async (id) => { await deleteRecord("programs", id); setPrograms((items) => items.filter((item) => item.id !== id)); },
     setActive: async (workout) => { if (workout) await saveRecord("activeWorkout", { ...workout, id: "active" }); else await deleteRecord("activeWorkout", "active"); setActiveWorkout(workout); },
     saveWorkout: async (workout) => { await saveRecord("workouts", workout); setWorkouts((items) => [...items.filter((item) => item.id !== workout.id), workout]); },
     removeWorkout: async (id) => { await deleteRecord("workouts", id); setWorkouts((items) => items.filter((item) => item.id !== id)); },
     saveProfile: async (next) => { await saveRecord("profile", next); setProfile(next); },
-  }), [activeWorkout, loading, profile, programs, refresh, workouts]);
+  }), [activeWorkout, loading, profile, programs, refresh, sync, workouts]);
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
 export function useRepMate() { const context = useContext(AppContext); if (!context) throw new Error("AppProvider missing"); return context; }
