@@ -6,6 +6,9 @@
   --line: #292929;
   --text: #f3f3f0;
   --muted: #91918e;
+  --font-inter: Inter, Arial, sans-serif;
+  --font-barlow: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --font-doto: Doto, "Courier New", monospace;
 }
 
 * { box-sizing: border-box; margin: 0; }
