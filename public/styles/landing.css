@@ -6,9 +6,6 @@
   --line: #292929;
   --text: #f3f3f0;
   --muted: #91918e;
-  --font-inter: Inter, Arial, sans-serif;
-  --font-barlow: "Barlow Condensed", "Arial Narrow", sans-serif;
-  --font-doto: Doto, "Courier New", monospace;
 }
 
 * { box-sizing: border-box; margin: 0; }
@@ -106,7 +103,7 @@ body::before {
 .mini-plan p { display: grid; color: #aaa; font-size: .46rem; }
 .mini-plan small { font-size: .42rem; }
 .mini-plan b { margin: 2px 0; color: #eee; font-size: .62rem; }
-.mini-plan button { padding: 7px 9px; border: 0; border-radius: 8px; font-size: .48rem; font-weight: 800; }
+.mini-plan .mock-button { padding: 7px 9px; border: 0; border-radius: 8px; background: #eee; color: #111; font-size: .48rem; font-weight: 800; }
 .mini-metrics { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 9px; border: 1px solid #292929; border-radius: 12px; }
 .mini-metrics span { display: grid; gap: 2px; padding: 10px 3px; color: #aaa; font-size: .41rem; text-align: center; text-transform: uppercase; }
 .mini-metrics span + span { border-left: 1px solid #292929; }
@@ -114,7 +111,7 @@ body::before {
 .mini-readiness { margin-top: 9px; padding: 10px; border: 1px solid #292929; border-radius: 12px; background: #111; }
 .mini-readiness > small { color: #aaa; font-size: .43rem; letter-spacing: .1em; }
 .mini-readiness div { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-top: 8px; }
-.mini-readiness button { padding: 8px 2px; border: 1px solid #292929; border-radius: 7px; background: #171717; color: #ddd; font-size: .43rem; }
+.mini-readiness .mock-button { padding: 8px 2px; border: 1px solid #292929; border-radius: 7px; background: #171717; color: #ddd; font-size: .43rem; text-align: center; }
 .mini-nav { display: flex; align-items: center; justify-content: space-around; height: 40px; margin-top: 9px; border-radius: 12px; background: #111; color: #aaa; font-size: .62rem; }
 .mini-nav b { padding: 7px; border-radius: 8px; background: #eee; color: #111; }
 .mini-nav span, .mini-nav b { display: grid; place-items: center; }
@@ -134,11 +131,11 @@ body::before {
 .set-row span { padding: 7px; border-radius: 6px; background: #080808; }
 .set-row i { display: grid; width: 25px; height: 25px; place-items: center; border-radius: 7px; background: #1d3225; color: #8cd8a5; font-style: normal; }
 .set-row.active { border-color: #39754d; }
-.add-set { width: 100%; margin-top: 8px; padding: 9px; border: 1px dashed #333; border-radius: 8px; background: transparent; color: #ddd; font-size: .48rem; }
+.add-set { display: block; width: 100%; margin-top: 8px; padding: 9px; border: 1px dashed #333; border-radius: 8px; background: transparent; color: #ddd; font-size: .48rem; text-align: center; }
 .mini-timer { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 8px; margin-top: 10px; padding: 10px; border-radius: 10px; background: #eee; color: #111; }
 .mini-timer span { font-size: .42rem; font-weight: 800; }
 .mini-timer b { font-family: var(--font-doto), monospace; font-size: .7rem; }
-.mini-timer button { padding: 5px; border: 0; border-radius: 5px; background: #222; color: #fff; font-size: .42rem; }
+.mini-timer .mock-button { padding: 5px; border: 0; border-radius: 5px; background: #222; color: #fff; font-size: .42rem; }
 
 .signal-bar { display: grid; grid-template-columns: repeat(3, 1fr); width: min(1180px, calc(100% - 40px)); margin: 0 auto 120px; border: 1px solid var(--line); border-radius: 18px; background: #0d0d0d; }
 .signal-bar > div { display: grid; grid-template-columns: 42px 1fr; align-items: center; gap: 12px; padding: 22px; }

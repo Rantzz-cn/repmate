@@ -1,6 +1,11 @@
 import type { Metadata, Viewport } from "next";
+import { Barlow_Condensed, Doto, Inter } from "next/font/google";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { PwaRegister } from "@/components/pwa-register";
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const barlow = Barlow_Condensed({ subsets: ["latin"], weight: ["700", "800", "900"], variable: "--font-barlow", display: "swap" });
+const doto = Doto({ subsets: ["latin"], weight: ["700", "800", "900"], variable: "--font-doto", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.rep-mate.app"),
@@ -29,4 +34,4 @@ export const metadata: Metadata = {
   },
 };
 export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#050505" };
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) { return <html lang="en"><head><link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" /><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Doto:wght@700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" /></head><body><AuthProvider>{children}</AuthProvider><PwaRegister /></body></html>; }
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) { return <html lang="en" className={`${inter.variable} ${barlow.variable} ${doto.variable}`}><body><AuthProvider>{children}</AuthProvider><PwaRegister /></body></html>; }
