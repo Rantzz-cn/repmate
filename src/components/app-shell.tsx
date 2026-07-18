@@ -36,7 +36,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     }
     setCircleNotifications((requestResult.count ?? 0) + reactionCount);
   }, [userId]);
-  useEffect(() => { if (!loading && !session) router.replace("/login"); }, [loading, router, session]);
+  useEffect(() => {
+    if (loading || session) return;
+    const signedOut = sessionStorage.getItem("repmate:signed-out") === "true";
+    if (signedOut) sessionStorage.removeItem("repmate:signed-out");
+    router.replace(signedOut ? "/" : "/login");
+  }, [loading, router, session]);
   useEffect(() => {
     const initialRefresh = window.setTimeout(() => void refreshCircleNotifications(), 0);
     const refresh = () => void refreshCircleNotifications();
