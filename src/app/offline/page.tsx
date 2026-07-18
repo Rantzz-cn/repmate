@@ -9,7 +9,7 @@ export default function OfflinePage() {
     <main className="offline-page grid-bg">
       <section className="offline-card" aria-labelledby="offline-title">
         <Image
-          src="/assets/images/whitelogo.png"
+          src="/assets/images/whitelogo.webp"
           width={188}
           height={58}
           alt="RepMate"

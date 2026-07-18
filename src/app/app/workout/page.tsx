@@ -34,7 +34,7 @@ export default function WorkoutPage() {
     timerFinished.current = true;
     if (state.profile.vibration && navigator.vibrate) navigator.vibrate([180, 80, 180]);
     if (state.profile.notifications && "Notification" in window && Notification.permission === "granted") {
-      new Notification("Rest complete", { body: "Your next set is ready.", icon: "/assets/images/logo.png" });
+      new Notification("Rest complete", { body: "Your next set is ready.", icon: "/assets/images/logo.webp" });
     }
   }, [state.profile.notifications, state.profile.vibration]);
 

@@ -29,7 +29,7 @@ async function createRecap(workout: Workout, profile: Profile) {
   for (let y = 0; y < 1920; y += 80) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(1080, y); ctx.stroke(); }
 
   try {
-    const logo = await loadImage("/assets/images/whitelogo.png");
+    const logo = await loadImage("/assets/images/whitelogo.webp");
     ctx.drawImage(logo, 70, 65, 310, 90);
   } catch {}
   ctx.fillStyle = "#888";
@@ -53,7 +53,7 @@ async function createRecap(workout: Workout, profile: Profile) {
     ctx.fillStyle = "#fff";
     ctx.fillRect(70, 210, 940, 900);
     try {
-      const logo = await loadImage("/assets/images/logo.png");
+      const logo = await loadImage("/assets/images/logo.webp");
       const scale = Math.min(460 / logo.width, 300 / logo.height);
       ctx.drawImage(logo, 540 - logo.width * scale / 2, 660 - logo.height * scale / 2, logo.width * scale, logo.height * scale);
     } catch {}

@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   authors: [{ name: "RepMate" }],
   creator: "RepMate",
   manifest: "/manifest.json",
-  icons: { icon: "/assets/images/logo.png", apple: "/assets/images/logo.png" },
+  icons: { icon: "/assets/images/logo.webp", apple: "/assets/images/logo.webp" },
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -24,13 +24,13 @@ export const metadata: Metadata = {
     title: "RepMate — Train With Purpose",
     description: "Plan workouts, log every set, and turn consistent training into visible progress.",
     url: "/",
-    images: [{ url: "/assets/images/repmate.png", alt: "RepMate workout tracker" }],
+    images: [{ url: "/assets/images/repmate.webp", alt: "RepMate workout tracker" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "RepMate — Train With Purpose",
     description: "Plan workouts, log every set, and turn consistent training into visible progress.",
-    images: ["/assets/images/repmate.png"],
+    images: ["/assets/images/repmate.webp"],
   },
 };
 export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#050505" };
