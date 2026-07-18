@@ -1,6 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
+import type { Metadata } from "next";
 import { LandingEnhancements } from "@/components/landing-enhancements";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 function landingMarkup() {
   const source = fs.readFileSync(path.join(process.cwd(), "src/content/landing.html"), "utf8");
@@ -13,7 +18,20 @@ function landingMarkup() {
 }
 
 export default function LandingPage() {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "RepMate",
+    url: "https://www.rep-mate.app/",
+    applicationCategory: "HealthApplication",
+    operatingSystem: "Web",
+    description: "A workout tracker for building routines, logging sets and reps, learning exercise form, and tracking strength progress.",
+    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+    featureList: ["Workout routine builder", "Set and rep tracking", "Exercise demonstrations", "Training volume and progress history", "Offline workout access"],
+  };
+
   return <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} />
     <link rel="stylesheet" href="/styles/landing.css" />
     <link rel="stylesheet" href="/styles/numeric.css" />
     <div dangerouslySetInnerHTML={{ __html: landingMarkup() }} />
