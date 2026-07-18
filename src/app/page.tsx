@@ -17,6 +17,12 @@ function landingMarkup() {
     .replaceAll('href="assets/', 'href="/assets/');
 }
 
+function landingStyles() {
+  return ["landing.css", "numeric.css"]
+    .map((file) => fs.readFileSync(path.join(process.cwd(), "public/styles", file), "utf8"))
+    .join("\n");
+}
+
 export default function LandingPage() {
   const structuredData = {
     "@context": "https://schema.org",
@@ -32,8 +38,7 @@ export default function LandingPage() {
 
   return <>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} />
-    <link rel="stylesheet" href="/styles/landing.css" />
-    <link rel="stylesheet" href="/styles/numeric.css" />
+    <style dangerouslySetInnerHTML={{ __html: landingStyles() }} />
     <div dangerouslySetInnerHTML={{ __html: landingMarkup() }} />
     <LandingEnhancements />
   </>;

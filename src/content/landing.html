@@ -32,9 +32,9 @@
 
       <div class="hero-stage" aria-label="RepMate mobile interface previews">
         <div class="stage-grid" aria-hidden="true"></div>
-        <img class="stage-coach" src="assets/images/repmate.png" alt="" aria-hidden="true">
+        <img class="stage-coach" src="assets/images/repmate.png" alt="" aria-hidden="true" fetchpriority="high" decoding="async">
 
-        <article class="phone phone-home">
+        <article class="phone phone-home" aria-hidden="true" inert>
           <div class="phone-hardware"><span>9:41</span><i></i><b>•••</b></div>
           <div class="phone-screen">
             <div class="phone-brand"><img src="assets/images/whitelogo.png" alt=""><span>Today</span></div>
@@ -47,7 +47,7 @@
           </div>
         </article>
 
-        <article class="phone phone-workout">
+        <article class="phone phone-workout" aria-hidden="true" inert>
           <div class="phone-hardware"><span>9:41</span><i></i><b>•••</b></div>
           <div class="phone-screen">
             <div class="phone-brand"><img src="assets/images/whitelogo.png" alt=""><span>Workout</span></div>
@@ -71,17 +71,17 @@
       <div class="inside-grid">
         <article class="feature feature-program"><div class="feature-copy"><span>Program</span><h3>Build the week you’ll actually follow.</h3><p>Create routines, assign training days, select movements, and change the plan without rebuilding it.</p></div><div class="program-ui"><header><small>ACTIVE PLAN</small><b>Cutting PPL</b></header><div><span>01</span><p><b>Push</b>Mon · 5 exercises</p><i><svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></i></div><div><span>02</span><p><b>Pull</b>Wed · 5 exercises</p><i><svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></i></div><div><span>03</span><p><b>Legs</b>Fri · 5 exercises</p><i><svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></i></div></div></article>
         <article class="feature feature-progress"><div class="feature-copy"><span>Progress</span><h3>See the work adding up.</h3><p>Review completed sessions, weekly volume, streaks, and shareable workout recaps.</p></div><div class="chart-ui"><small>TRAINING VOLUME</small><strong>8,420 <i>kg</i></strong><svg viewBox="0 0 360 130" preserveAspectRatio="none"><path d="M0 108C35 100 47 72 78 83S120 111 151 64 199 32 229 48 277 91 306 47 360 18"/><path class="fill" d="M0 108C35 100 47 72 78 83S120 111 151 64 199 32 229 48 277 91 306 47 360 18V130H0Z"/></svg><div><span>Week 1</span><span>Week 2</span><span>Week 3</span><span>Now</span></div></div></article>
-        <article class="feature feature-coach"><img src="assets/images/gorillamate.png" alt="Gori Mate exercise coach"><div class="feature-copy"><span>Exercise Coach</span><h3>Short cues. Better reps.</h3><p>Gori Mate keeps the motivation brief while exercise details show exactly what the movement hits.</p></div></article>
+        <article class="feature feature-coach"><img src="assets/images/gorillamate.png" alt="Gori Mate exercise coach" loading="lazy" decoding="async"><div class="feature-copy"><span>Exercise Coach</span><h3>Short cues. Better reps.</h3><p>Gori Mate keeps the motivation brief while exercise details show exactly what the movement hits.</p></div></article>
       </div>
     </section>
 
     <section class="exercise-section" id="exercises">
       <header class="section-head"><div><p class="kicker">Exercise Library</p><h2>Learn the movement.<br>Know the target.</h2></div><p>Real animated demonstrations, focused coaching cues, equipment filters, and front/back muscle maps.</p></header>
       <div class="exercise-rail">
-        <article><div><img src="assets/animations/barbell-bench-press.gif" alt="Barbell bench press animation"><span>Chest</span></div><h3>Barbell Bench Press</h3><p>Barbell · Strength</p></article>
-        <article><div><img src="assets/animations/lat-pulldown.gif" alt="Lat pulldown animation"><span>Back</span></div><h3>Lat Pulldown</h3><p>Cable · Pull</p></article>
-        <article><div><img src="assets/animations/barbell-full-squat.gif" alt="Barbell full squat animation"><span>Quads</span></div><h3>Barbell Full Squat</h3><p>Barbell · Lower Body</p></article>
-        <article><div><img src="assets/animations/dumbbell-biceps-curl.gif" alt="Dumbbell curl animation"><span>Biceps</span></div><h3>Dumbbell Curl</h3><p>Dumbbell · Isolation</p></article>
+        <article><div><img src="assets/animations/barbell-bench-press.gif" alt="Barbell bench press animation" loading="lazy" decoding="async"><span>Chest</span></div><h3>Barbell Bench Press</h3><p>Barbell · Strength</p></article>
+        <article><div><img src="assets/animations/lat-pulldown.gif" alt="Lat pulldown animation" loading="lazy" decoding="async"><span>Back</span></div><h3>Lat Pulldown</h3><p>Cable · Pull</p></article>
+        <article><div><img src="assets/animations/barbell-full-squat.gif" alt="Barbell full squat animation" loading="lazy" decoding="async"><span>Quads</span></div><h3>Barbell Full Squat</h3><p>Barbell · Lower Body</p></article>
+        <article><div><img src="assets/animations/dumbbell-biceps-curl.gif" alt="Dumbbell curl animation" loading="lazy" decoding="async"><span>Biceps</span></div><h3>Dumbbell Curl</h3><p>Dumbbell · Isolation</p></article>
       </div>
       <div class="library-cta"><p><b>34 movements</b> across chest, back, shoulders, arms, legs, calves, and core.</p><a href="login.html">Open the Library <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6M7 7v10M17 7v10M20 9v6M7 12h10"/></svg></a></div>
     </section>
@@ -91,7 +91,7 @@
       <ol><li><span>01</span><div><h3>Choose the session</h3><p>Start today’s routine or customize the exercises first.</p></div></li><li><span>02</span><div><h3>Log the honest work</h3><p>Track weight and reps while the rest timer keeps the pace.</p></div></li><li><span>03</span><div><h3>Finish with context</h3><p>Add an optional photo and generate a social workout recap.</p></div></li><li><span>04</span><div><h3>Return with proof</h3><p>Use history and volume to make the next session better.</p></div></li></ol>
     </section>
 
-    <section class="final-cta"><img src="assets/images/repmate.png" alt="RepMate wolf coach"><div><p class="kicker">Your next session</p><h2>Ready when<br>you are.</h2><p>Continue with Google, build a routine, and give every rep a place to count.</p></div><a class="button button-light" href="login.html">Continue With Google <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6M7 7v10M17 7v10M20 9v6M7 12h10"/></svg></span></a></section>
+    <section class="final-cta"><img src="assets/images/repmate.png" alt="RepMate wolf coach" loading="lazy" decoding="async"><div><p class="kicker">Your next session</p><h2>Ready when<br>you are.</h2><p>Continue with Google, build a routine, and give every rep a place to count.</p></div><a class="button button-light" href="login.html">Continue With Google <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6M7 7v10M17 7v10M20 9v6M7 12h10"/></svg></span></a></section>
   </main>
 
   <footer class="site-footer"><a class="footer-logo" href="#top"><img src="assets/images/whitelogo.png" alt="RepMate"></a><p>Train with purpose. Progress with proof.</p><nav><a href="#inside">Features</a><a href="#exercises">Exercises</a><a href="login.html">Sign In</a></nav><span>© 2026 RepMate</span></footer>
