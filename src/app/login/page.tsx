@@ -33,7 +33,16 @@ export default function LoginPage() {
 
   useEffect(() => {
     document.body.classList.add("auth-page");
-    return () => document.body.classList.remove("auth-page");
+    const storedError = sessionStorage.getItem("repmate:auth-error");
+    let errorTimer: number | undefined;
+    if (storedError) {
+      sessionStorage.removeItem("repmate:auth-error");
+      errorTimer = window.setTimeout(() => setError(storedError), 0);
+    }
+    return () => {
+      if (errorTimer) window.clearTimeout(errorTimer);
+      document.body.classList.remove("auth-page");
+    };
   }, []);
   useEffect(() => { if (!loading && session) router.replace("/app"); }, [loading, router, session]);
   useEffect(() => {

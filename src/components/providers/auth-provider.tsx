@@ -24,11 +24,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!Capacitor.isNativePlatform()) return;
     const handleUrl = async (url?: string) => {
       if (!url?.startsWith("app.repmate.mobile://login-callback")) return;
-      const code = new URL(url).searchParams.get("code");
-      if (!code) return;
-      const { error } = await supabase.auth.exchangeCodeForSession(code);
+      const callback = new URL(url);
+      const code = callback.searchParams.get("code");
+      const callbackError = callback.searchParams.get("error_description") || callback.searchParams.get("error");
+      const hash = new URLSearchParams(callback.hash.slice(1));
+      const accessToken = hash.get("access_token");
+      const refreshToken = hash.get("refresh_token");
+      const result = code
+        ? await supabase.auth.exchangeCodeForSession(code)
+        : accessToken && refreshToken
+          ? await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
+          : { error: new Error(callbackError || "Google sign-in did not return a valid session. Please try again.") };
       await Browser.close().catch(() => undefined);
-      if (error) window.dispatchEvent(new CustomEvent("repmate:auth-error", { detail: error.message }));
+      if (result.error) {
+        sessionStorage.setItem("repmate:auth-error", result.error.message);
+        window.location.replace("/login");
+        return;
+      }
+      window.location.replace("/app");
     };
     let removeListener: (() => Promise<void>) | undefined;
     void App.addListener("appUrlOpen", ({ url }) => void handleUrl(url)).then((listener) => { removeListener = () => listener.remove(); });

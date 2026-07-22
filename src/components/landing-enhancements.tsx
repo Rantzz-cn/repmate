@@ -12,9 +12,11 @@ export function LandingEnhancements() {
   const router = useRouter();
 
   useEffect(() => {
-    if (loading) return;
-    if (session) router.replace("/app");
-    else if (Capacitor.isNativePlatform()) router.replace("/login");
+    if (Capacitor.isNativePlatform()) {
+      router.replace(!loading && session ? "/app" : "/login");
+      return;
+    }
+    if (!loading && session) router.replace("/app");
   }, [loading, router, session]);
 
   useEffect(() => {
