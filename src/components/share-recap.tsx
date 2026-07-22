@@ -15,6 +15,23 @@ const loadImage = (src: string) => new Promise<HTMLImageElement>((resolve, rejec
   image.src = src;
 });
 
+function drawImageCover(ctx: CanvasRenderingContext2D, image: HTMLImageElement, x: number, y: number, width: number, height: number) {
+  const sourceRatio = image.width / image.height;
+  const targetRatio = width / height;
+  let sourceX = 0;
+  let sourceY = 0;
+  let sourceWidth = image.width;
+  let sourceHeight = image.height;
+  if (sourceRatio < targetRatio) {
+    sourceHeight = image.width / targetRatio;
+    sourceY = (image.height - sourceHeight) / 2;
+  } else {
+    sourceWidth = image.height * targetRatio;
+    sourceX = (image.width - sourceWidth) / 2;
+  }
+  ctx.drawImage(image, sourceX, sourceY, sourceWidth, sourceHeight, x, y, width, height);
+}
+
 async function createRecap(workout: Workout, profile: Profile) {
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d")!;
@@ -30,7 +47,7 @@ async function createRecap(workout: Workout, profile: Profile) {
 
   try {
     const logo = await loadImage("/assets/images/whitelogo.webp");
-    ctx.drawImage(logo, 70, 65, 310, 90);
+    drawImageCover(ctx, logo, 70, 65, 310, 90);
   } catch {}
   ctx.fillStyle = "#888";
   ctx.font = "700 26px Arial";
