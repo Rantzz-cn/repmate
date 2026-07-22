@@ -5,11 +5,15 @@ import { createHash } from "node:crypto";
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 
+const capacitorBuild = process.env.CAPACITOR_BUILD === "true";
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  ...(capacitorBuild ? { output: "export", trailingSlash: true } : {}),
   allowedDevOrigins: ["192.168.100.6"],
   turbopack: { root: process.cwd() },
   images: {
+    unoptimized: capacitorBuild,
     remotePatterns: [{ protocol: "https", hostname: "lh3.googleusercontent.com" }],
   },
 };
@@ -77,7 +81,7 @@ export default withSentryConfig(withSerwist(nextConfig), {
   // This can increase your server load as well as your hosting bill.
   // Note: Check that the configured route will not match with your Next.js middleware, otherwise reporting of client-
   // side errors will fail.
-  tunnelRoute: "/monitoring",
+  ...(capacitorBuild ? {} : { tunnelRoute: "/monitoring" }),
 
   webpack: {
     // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)

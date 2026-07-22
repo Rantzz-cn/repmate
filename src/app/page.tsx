@@ -30,9 +30,10 @@ export default function LandingPage() {
     name: "RepMate",
     url: "https://www.rep-mate.app/",
     applicationCategory: "HealthApplication",
-    operatingSystem: "Web",
+    operatingSystem: "Android, Web",
     description: "A workout tracker for building routines, logging sets and reps, learning exercise form, and tracking strength progress.",
     offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+    downloadUrl: "https://www.rep-mate.app/downloads/RepMate.apk",
     featureList: ["Workout routine builder", "Set and rep tracking", "Exercise demonstrations", "Training volume and progress history", "Offline workout access"],
   };
 

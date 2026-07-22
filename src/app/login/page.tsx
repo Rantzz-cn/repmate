@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/providers/auth-provider";
+import { Browser } from "@capacitor/browser";
+import { Capacitor } from "@capacitor/core";
 import { supabase } from "@/lib/supabase";
 
 const legal = {
@@ -34,12 +36,21 @@ export default function LoginPage() {
     return () => document.body.classList.remove("auth-page");
   }, []);
   useEffect(() => { if (!loading && session) router.replace("/app"); }, [loading, router, session]);
+  useEffect(() => {
+    const showAuthError = (event: Event) => { setError((event as CustomEvent<string>).detail); setBusy(false); };
+    window.addEventListener("repmate:auth-error", showAuthError);
+    let removeListener: (() => Promise<void>) | undefined;
+    if (Capacitor.isNativePlatform()) void Browser.addListener("browserFinished", () => setBusy(false)).then((listener) => { removeListener = () => listener.remove(); });
+    return () => { window.removeEventListener("repmate:auth-error", showAuthError); void removeListener?.(); };
+  }, []);
 
   const signIn = async () => {
     setBusy(true);
     setError("");
-    const result = await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: `${location.origin}/app` } });
+    const native = Capacitor.isNativePlatform();
+    const result = await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: native ? "app.repmate.mobile://login-callback" : `${location.origin}/app`, skipBrowserRedirect: native } });
     if (result.error) { setError(result.error.message); setBusy(false); }
+    else if (native && result.data.url) await Browser.open({ url: result.data.url });
   };
   const openLegal = (type: keyof typeof legal) => { setLegalType(type); dialog.current?.showModal(); };
   const policy = legal[legalType];

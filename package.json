@@ -5,10 +5,18 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build --webpack",
+    "build:native": "cross-env CAPACITOR_BUILD=true next build --webpack",
+    "native:sync": "npm run build:native && cap sync android",
+    "native:open": "cap open android",
     "start": "next start",
     "lint": "eslint ."
   },
   "dependencies": {
+    "@capacitor/android": "^8.4.2",
+    "@capacitor/app": "^8.1.1",
+    "@capacitor/browser": "^8.0.4",
+    "@capacitor/cli": "^8.4.2",
+    "@capacitor/core": "^8.4.2",
     "@radix-ui/react-dialog": "latest",
     "@radix-ui/react-select": "latest",
     "@sentry/nextjs": "^10.65.0",
@@ -16,6 +24,7 @@
     "@supabase/supabase-js": "latest",
     "class-variance-authority": "latest",
     "clsx": "latest",
+    "cross-env": "^10.1.0",
     "lucide-react": "latest",
     "next": "latest",
     "react": "latest",
@@ -24,6 +33,7 @@
     "tailwind-merge": "latest"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
     "@tailwindcss/postcss": "latest",
     "@types/node": "latest",
     "@types/react": "latest",
