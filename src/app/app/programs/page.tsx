@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, Copy, Pencil, Play, Plus, Trash2, TriangleAlert } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
@@ -8,6 +8,7 @@ import { useRepMate } from "@/components/providers/app-provider";
 import { RoutineEditor } from "@/components/routine-editor";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { weekdays } from "@/lib/data";
 import type { Program, Routine } from "@/lib/types";
 import { createWorkout } from "@/lib/workouts";
@@ -17,6 +18,10 @@ export default function ProgramsPage() {
   const router = useRouter();
   const [editing, setEditing] = useState<{ program: Program; routine: Routine } | null>(null);
   const [toast, setToast] = useState("");
+  const [creating, setCreating] = useState(false);
+  const [programName, setProgramName] = useState("");
+  const [createError, setCreateError] = useState("");
+  const [createBusy, setCreateBusy] = useState(false);
   const [pendingDelete, setPendingDelete] = useState<Program | null>(null);
   const [pendingRoutineDelete, setPendingRoutineDelete] = useState<{ program: Program; routine: Routine } | null>(null);
   const toastTimer = useRef<number | null>(null);
@@ -27,10 +32,29 @@ export default function ProgramsPage() {
     toastTimer.current = window.setTimeout(() => setToast(""), 2800);
   };
 
-  const create = async () => {
+  const openCreate = () => {
+    setProgramName("");
+    setCreateError("");
+    setCreating(true);
+  };
+
+  const create = async (event: FormEvent) => {
+    event.preventDefault();
+    const name = programName.trim().replace(/\s+/g, " ");
+    if (name.length < 2) return setCreateError("Enter a program name with at least 2 characters.");
+    if (name.length > 50) return setCreateError("Keep the program name under 50 characters.");
+    if (state.programs.some((program) => program.name.toLocaleLowerCase() === name.toLocaleLowerCase())) return setCreateError("You already have a program with this name.");
+    setCreateBusy(true);
     const id = crypto.randomUUID();
-    await state.saveProgram({ id, name: "My Program", split: "Custom", active: !state.programs.length, days: [] });
-    notify("New program created.");
+    try {
+      await state.saveProgram({ id, name, split: "Custom", active: !state.programs.length, days: [] });
+      setCreating(false);
+      notify(`${name} created.`);
+    } catch (error) {
+      setCreateError(error instanceof Error ? error.message : "Could not create the program. Try again.");
+    } finally {
+      setCreateBusy(false);
+    }
   };
 
   const addRoutine = async (program: Program) => {
@@ -78,7 +102,7 @@ export default function ProgramsPage() {
   };
 
   return <div className="app-page">
-    <PageHeader eyebrow="Plan your training" title="Program" action={<Button onClick={create} variant="secondary"><Plus className="size-4" />New</Button>} />
+    <PageHeader eyebrow="Plan your training" title="Program" action={<Button onClick={openCreate} variant="secondary"><Plus className="size-4" />New</Button>} />
     <div className="program-list">
       {state.programs.map((program) => <section key={program.id} className="program-card-native">
         <header className="program-card-native__head"><div><p className="eyebrow">{program.split}</p><h2>{program.name}</h2></div><span className="program-status">{program.active ? "Active" : "Inactive"}</span></header>
@@ -94,6 +118,18 @@ export default function ProgramsPage() {
       </section>)}
     </div>
     {editing && <RoutineEditor key={editing.routine.id} program={editing.program} routine={editing.routine} open onOpenChange={(open) => !open && setEditing(null)} onSave={saveRoutine} />}
+    <Dialog open={creating} onOpenChange={(open) => !createBusy && setCreating(open)}>
+      <DialogContent className="max-w-[380px] p-0">
+        <form onSubmit={create}>
+          <div className="grid gap-5 p-6 pr-16">
+            <div><p className="eyebrow">Build your plan</p><DialogTitle className="mt-1">Create a program</DialogTitle><DialogDescription className="mt-2 leading-relaxed">Give your training plan a name. You can add workout days and exercises next.</DialogDescription></div>
+            <label><span className="mb-2 block text-xs font-semibold text-zinc-400">Program name</span><Input autoFocus value={programName} onChange={(event) => { setProgramName(event.target.value); if (createError) setCreateError(""); }} placeholder="e.g. Push Pull Legs" maxLength={50} aria-invalid={Boolean(createError)} aria-describedby={createError ? "program-name-error" : undefined} /></label>
+            {createError && <p id="program-name-error" role="alert" className="text-xs leading-relaxed text-red-400">{createError}</p>}
+          </div>
+          <div className="grid grid-cols-2 gap-2 border-t border-white/10 p-4"><Button type="button" variant="secondary" disabled={createBusy} onClick={() => setCreating(false)}>Cancel</Button><Button type="submit" disabled={createBusy || !programName.trim()}>{createBusy ? "Creating…" : "Create program"}</Button></div>
+        </form>
+      </DialogContent>
+    </Dialog>
     <Dialog open={Boolean(pendingDelete)} onOpenChange={(open) => !open && setPendingDelete(null)}>
       <DialogContent className="confirm-dialog max-w-[340px] p-0">
         <div className="confirm-dialog__body"><span className="confirm-dialog__icon"><TriangleAlert /></span><div className="pr-10"><p className="confirm-dialog__eyebrow">Remove program</p><DialogTitle className="text-lg">Delete {pendingDelete?.name}?</DialogTitle><DialogDescription className="mt-2 leading-relaxed">The program and its routines will be removed. Completed workouts will stay in Progress.</DialogDescription></div></div>
