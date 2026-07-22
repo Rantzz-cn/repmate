@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Capacitor } from "@capacitor/core";
 import { useAuth } from "@/components/providers/auth-provider";
 
 type BodyMusclesApi = { BodyChart: new (target: Element, options: Record<string, unknown>) => unknown; ViewSide: { FRONT: string } };
@@ -11,7 +12,9 @@ export function LandingEnhancements() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && session) router.replace("/app");
+    if (loading) return;
+    if (session) router.replace("/app");
+    else if (Capacitor.isNativePlatform()) router.replace("/login");
   }, [loading, router, session]);
 
   useEffect(() => {
