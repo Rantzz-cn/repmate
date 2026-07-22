@@ -107,3 +107,10 @@ html[data-theme=light] .program-overview-card{border-color:#d8d8d4;background:#f
 html[data-theme=light] .program-overview-card__icon{border-color:#d8d8d4;background:#ececea}
 html[data-theme=light] .program-empty strong{color:#222}
 @media(min-width:700px){.program-overview{grid-template-columns:repeat(2,minmax(0,1fr))}.program-empty--overview{grid-column:1/-1}}
+
+/* Keep the active rest countdown visible and protect the next set until it ends. */
+.workout-page:has(>section.sticky){padding-bottom:172px}
+.workout-page>section.sticky{position:fixed;z-index:49;right:auto;bottom:92px;left:50%;width:calc(100% - 40px);max-width:390px;transform:translateX(-50%)}
+.app-shell:has(.workout-page) .gori-chat-launcher{display:none}
+@media(max-width:370px){.workout-page>section.sticky{width:calc(100% - 28px)}}
+@media(min-width:900px){.workout-page>section.sticky{bottom:24px;left:calc(240px + (100vw - 240px)/2);max-width:748px}.workout-page:has(>section.sticky){padding-bottom:172px}}
