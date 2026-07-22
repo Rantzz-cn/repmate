@@ -88,3 +88,22 @@ html[data-theme=light] .app-shell div.bg-white{background:#fff!important;color:#
 .dashboard-coach__bubble:before{position:absolute;left:-7px;bottom:22px;width:14px;height:14px;background:#fff;content:"";transform:rotate(45deg)}
 .dashboard-coach__bubble p{overflow-wrap:anywhere}
 @media(max-width:350px){.dashboard-coach{grid-template-columns:76px minmax(0,1fr);padding-inline:10px}.dashboard-coach__bubble{padding:12px}}
+
+/* Compact program index; workouts are revealed only inside a selected program. */
+.program-overview{display:grid;gap:10px}
+.program-overview-card{display:grid;min-width:0;grid-template-columns:48px minmax(0,1fr) 20px;align-items:center;gap:13px;padding:15px;border:1px solid var(--line);border-radius:18px;background:#111;color:inherit;text-align:left;transition:border-color .18s ease,transform .18s ease}
+.program-overview-card:hover{border-color:#ffffff2e;transform:translateY(-1px)}
+.program-overview-card:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.program-overview-card__icon{display:grid;width:48px;height:48px;place-items:center;border:1px solid var(--line);border-radius:14px;background:#1b1b1b}
+.program-overview-card__icon svg{width:20px}
+.program-overview-card__copy{display:grid;min-width:0;gap:3px}
+.program-overview-card__copy small{color:#8c8c8c;font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.program-overview-card__copy strong{overflow:hidden;font-size:.98rem;text-overflow:ellipsis;white-space:nowrap}
+.program-overview-card__copy span{color:#818181;font-size:.67rem}
+.program-overview-card__arrow{width:18px;color:#686868}
+.program-empty{display:grid;justify-items:center;gap:8px;padding:28px 18px;border:1px dashed var(--line);border-radius:16px;color:#858585;text-align:center}
+.program-empty>svg{width:24px;margin-bottom:2px}.program-empty strong{color:#ddd;font-size:.85rem}.program-empty p{max-width:270px;font-size:.7rem;line-height:1.5}.program-empty--overview{padding-block:42px}.program-empty--overview button{margin-top:6px}
+html[data-theme=light] .program-overview-card{border-color:#d8d8d4;background:#fff;color:#111}
+html[data-theme=light] .program-overview-card__icon{border-color:#d8d8d4;background:#ececea}
+html[data-theme=light] .program-empty strong{color:#222}
+@media(min-width:700px){.program-overview{grid-template-columns:repeat(2,minmax(0,1fr))}.program-empty--overview{grid-column:1/-1}}
