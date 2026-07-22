@@ -4,4 +4,5 @@
     <string name="title_activity_main">RepMate</string>
     <string name="package_name">app.repmate.mobile</string>
     <string name="custom_url_scheme">app.repmate.mobile</string>
+    <string name="widget_description">Today’s RepMate workout and a shortcut to start training.</string>
 </resources>

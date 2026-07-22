@@ -2,6 +2,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { defaultProfile } from "@/lib/data";
 import { deleteRecord, getSyncSnapshot, listRecords, saveRecord, subscribeSync, syncOutbox, type SyncSnapshot } from "@/lib/repository";
+import { updateTodayWidget } from "@/lib/native-widget";
 import type { Profile, Program, Workout } from "@/lib/types";
 import { useAuth } from "./auth-provider";
 
@@ -67,6 +68,17 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     document.documentElement.dataset.theme = theme;
     localStorage.setItem("theme", theme);
   }, [profile.theme]);
+  useEffect(() => {
+    if (loading) return;
+    const activeProgram = programs.find((program) => program.active) ?? programs[0];
+    const today = activeProgram?.days.find((day) => day.weekday === new Date().getDay());
+    const payload = activeWorkout
+      ? { title: activeWorkout.name, subtitle: `Exercise ${activeWorkout.current + 1} of ${activeWorkout.exercises.length}`, action: "Resume workout" }
+      : today
+        ? { title: today.name, subtitle: `${today.exercises.length} exercises · ${activeProgram.name}`, action: "Start workout" }
+        : { title: "Recovery day", subtitle: activeProgram ? `Next session in ${activeProgram.name}` : "Create your first training program", action: "Open RepMate" };
+    void updateTodayWidget(payload).catch(() => undefined);
+  }, [activeWorkout, loading, programs]);
   const value = useMemo<AppState>(() => ({ loading, profile, programs, workouts, activeWorkout, sync, refresh,
     retrySync: async () => { await syncOutbox({ force: true }); },
     saveProgram: async (program) => { await saveRecord("programs", program); setPrograms((items) => [...items.filter((item) => item.id !== program.id), program]); },
