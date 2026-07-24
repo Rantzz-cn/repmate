@@ -23,37 +23,24 @@ const isDev = process.env.NODE_ENV === "development";
 // ─────────────────────────────────────────────────────────────────────────────
 const securityHeaders = [
   {
-    // FIX #3 – Missing Anti-clickjacking Header
-    // Prevents any page from being embedded in an iframe on another origin.
     key: "X-Frame-Options",
     value: "DENY",
   },
   {
-    // FIX #4 – X-Content-Type-Options Header Missing
-    // Prevents browsers from MIME-sniffing the response away from the
-    // declared Content-Type, blocking MIME-confusion attacks.
     key: "X-Content-Type-Options",
     value: "nosniff",
   },
   {
-    // HSTS – Force HTTPS for 1 year, including subdomains.
-    // TRADE-OFF: Only enable on a domain fully committed to HTTPS.
-    // Do not set this on localhost or staging domains.
     key: "Strict-Transport-Security",
     value: isDev
       ? "max-age=0"
       : "max-age=31536000; includeSubDomains; preload",
   },
   {
-    // Referrer-Policy – Prevent auth tokens in URLs from leaking via
-    // the Referer header to third-party origins (e.g., CDN logs).
     key: "Referrer-Policy",
     value: "strict-origin-when-cross-origin",
   },
   {
-    // Permissions-Policy – Disable all browser APIs RepMate does not use.
-    // An XSS attacker cannot silently access camera/mic/location.
-    // TRADE-OFF: Must be updated if future features need these APIs.
     key: "Permissions-Policy",
     value:
       "camera=(), microphone=(), geolocation=(), payment=(), usb=(), " +
@@ -61,23 +48,12 @@ const securityHeaders = [
       "ambient-light-sensor=(), display-capture=(), document-domain=()",
   },
   {
-    // FIX #2 – Cross-Domain Misconfiguration
-    // Prevents other origins from reading this origin's resources.
     key: "Cross-Origin-Resource-Policy",
-    value: "same-origin",
+    value: "cross-origin",
   },
   {
-    // Isolates the browsing context from cross-origin opener attacks.
-    // 'same-origin-allow-popups' is used because Supabase OAuth opens
-    // a popup window for the authentication flow.
     key: "Cross-Origin-Opener-Policy",
     value: "same-origin-allow-popups",
-  },
-  {
-    // Allows loading cross-origin resources (e.g., Google Fonts) without
-    // credentials while enabling cross-origin isolation.
-    key: "Cross-Origin-Embedder-Policy",
-    value: "credentialless",
   },
 ];
 
